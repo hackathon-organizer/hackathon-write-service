@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="create-project-structure" author="Yankes">
+
+        <createTable tableName="hackathon">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_hackathon_id"/>
+            </column>
+            <column name="description" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="organizer_info" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_start_date" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_end_date" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="team">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_team_id"/>
+            </column>
+            <column type="bigint" name="hackathon_id"/>
+            <column type="bigint" name="owner_id"/>
+        </createTable>
+
+        <createTable tableName="team_tags">
+            <column name="team_id" type="bigint"/>
+            <column name="tag_id" type="bigint"/>
+        </createTable>
+
+        <createTable tableName="team_members">
+            <column name="team_id" type="bigint"/>
+            <column name="user_id" type="bigint"/>
+        </createTable>
+
+        <createTable tableName="hackathon_organizers">
+            <column name="hackathon_id" type="bigint"/>
+            <column name="user_id" type="bigint"/>
+        </createTable>
+
+
+        <addForeignKeyConstraint constraintName="fk_hackathon_team_id" referencedTableName="hackathon"
+                                    baseColumnNames="hackathon_id"
+                                    baseTableName="team" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+    </changeSet>
+</databaseChangeLog>
