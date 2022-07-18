@@ -2,7 +2,7 @@ spring:
   datasource:
     username: postgres
     password: qwerty
-    url: jdbc:postgresql://localhost:5432/dev_db
+    url: jdbc:postgresql://localhost:5432/hackathon_db
   jpa:
     properties:
       hibernate:

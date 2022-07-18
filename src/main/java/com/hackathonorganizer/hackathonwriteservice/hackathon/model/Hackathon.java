@@ -1,10 +1,13 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.model;
 
+import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,14 +18,18 @@ public class Hackathon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     private String description;
 
-    @Column(name = "organizer_info")
+    @NotEmpty
     private String organizerInfo;
 
-    @Column(name = "event_start_date")
+    @NotEmpty
     private LocalDateTime eventStartDate;
 
-    @Column(name = "event_end_date")
+    @NotEmpty
     private LocalDateTime eventEndDate;
+
+    @OneToMany(mappedBy = "hackathon")
+    private List<Team> teams;
 }
