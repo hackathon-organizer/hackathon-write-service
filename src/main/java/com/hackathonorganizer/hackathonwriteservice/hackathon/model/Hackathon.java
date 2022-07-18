@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,10 +25,10 @@ public class Hackathon {
     @NotEmpty
     private String organizerInfo;
 
-    @NotEmpty
+    @NotNull
     private LocalDateTime eventStartDate;
 
-    @NotEmpty
+    @NotNull
     private LocalDateTime eventEndDate;
 
     @OneToMany(mappedBy = "hackathon")

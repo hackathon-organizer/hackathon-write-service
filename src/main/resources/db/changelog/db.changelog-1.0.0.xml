@@ -64,15 +64,17 @@
         </createIndex>
 
         <createTable tableName="team_members">
-            <column name="team_id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="pk_team_members_id"/>
-            </column>
+            <column name="team_id" type="bigint"/>
             <column name="team_member_id" type="bigint"/>
         </createTable>
 
         <addForeignKeyConstraint constraintName="fk_hackathon_team_id" referencedTableName="hackathon"
                                     baseColumnNames="hackathon_id"
                                     baseTableName="team" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint constraintName="fk_team_team_members_id" referencedTableName="team"
+                                 baseColumnNames="team_id"
+                                 baseTableName="team_members" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
 
         <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="tag_id" constraintName="fk_team_tags_tag_id" referencedTableName="tag"
                                  referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>

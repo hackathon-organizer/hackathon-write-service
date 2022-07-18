@@ -31,10 +31,7 @@ public class Team {
     private Set<Long> teamMembersIds;
 
     @ManyToMany
-    @JoinTable(
-            name = "team_tags",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
+    @JoinTable(name = "team_tags", joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
 }
