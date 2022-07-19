@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="create-project-structure" author="Yankes">
+
+        <createTable tableName="hackathon">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_hackathon_id"/>
+            </column>
+            <column name="description" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="organizer_info" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_start_date" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_end_date" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="team">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_team_id"/>
+            </column>
+            <column type="bigint" name="hackathon_id">
+                <constraints nullable="false"/>
+            </column>
+            <column type="bigint" name="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tag">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_tag_id"/>
+            </column>
+            <column name="name" type="varchar" />
+        </createTable>
+
+        <createTable tableName="team_tags">
+            <column name="team_id" type="bigint"/>
+            <column name="tag_id" type="bigint"/>
+        </createTable>
+
+        <createIndex tableName="team_tags" indexName="team_tags_index">
+            <column name="team_id"/>
+            <column name="tag_id"/>
+        </createIndex>
+
+        <createTable tableName="hackathon_organizers">
+            <column name="hackathon_id" type="bigint"/>
+            <column name="user_id" type="bigint"/>
+        </createTable>
+
+        <createIndex tableName="hackathon_organizers" indexName="hackathon_organizers_index">
+            <column name="hackathon_id"/>
+            <column name="user_id"/>
+        </createIndex>
+
+        <createTable tableName="team_members">
+            <column name="team_id" type="bigint"/>
+            <column name="team_member_id" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_hackathon_team_id" referencedTableName="hackathon"
+                                    baseColumnNames="hackathon_id"
+                                    baseTableName="team" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint constraintName="fk_team_team_members_id" referencedTableName="team"
+                                 baseColumnNames="team_id"
+                                 baseTableName="team_members" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="tag_id" constraintName="fk_team_tags_tag_id" referencedTableName="tag"
+                                 referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+    </changeSet>
+</databaseChangeLog>
