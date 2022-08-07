@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: validate
+
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
