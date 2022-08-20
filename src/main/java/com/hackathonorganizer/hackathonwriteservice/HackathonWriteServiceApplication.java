@@ -13,10 +13,4 @@ public class HackathonWriteServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(HackathonWriteServiceApplication.class, args);
     }
-
-    @Bean
-    public KeycloakSpringBootConfigResolver KeycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
-    }
-
 }

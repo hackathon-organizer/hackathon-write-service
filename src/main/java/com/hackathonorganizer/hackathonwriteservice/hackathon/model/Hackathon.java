@@ -3,7 +3,6 @@ package com.hackathonorganizer.hackathonwriteservice.hackathon.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
