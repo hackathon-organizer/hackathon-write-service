@@ -1,24 +1,19 @@
 spring:
-  datasource:
-    username: postgres
-    password: qwerty
-    url: jdbc:postgresql://localhost:5432/hackathon_db
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: validate
+  config:
+    import: optional:configserver:http://localhost:8200/
+  cloud:
+    config:
+      token: roottoken
   application:
     name: hackathon-write-service
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    hostname: localhost
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 0
 
