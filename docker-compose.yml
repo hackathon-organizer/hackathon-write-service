@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  postgresql:
+    image: docker.io/bitnami/postgresql:14
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=qwerty
+      - POSTGRESQL_DATABASE=hackathon_db

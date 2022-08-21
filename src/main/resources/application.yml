@@ -1,8 +1,13 @@
 spring:
+  config:
+    import: optional:configserver:http://localhost:8888/
+  cloud:
+    config:
+      token: roottoken
   datasource:
     username: postgres
     password: qwerty
-    url: jdbc:postgresql://localhost:5432/hackathon_db
+    url: jdbc:postgresql://localhost:5434/hackathon_db
   jpa:
     properties:
       hibernate:
@@ -13,12 +18,6 @@ spring:
     name: hackathon-write-service
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    hostname: localhost
 server:
   port: 0
 
