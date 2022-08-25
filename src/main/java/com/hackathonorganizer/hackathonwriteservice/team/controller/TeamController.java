@@ -19,15 +19,23 @@ public class TeamController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TeamResponse create(@RequestBody TeamRequest teamRequest) {
+
         log.info("Processing new team create request {}", teamRequest);
         return teamService.create(teamRequest);
     }
 
     @PutMapping("/{id}")
-    public TeamResponse edit(@PathVariable Long id,
-            @RequestBody TeamRequest teamRequest) {
+    public TeamResponse edit(@PathVariable Long id, @RequestBody TeamRequest teamRequest) {
+
         log.info("Processing new team id: {} edit request {}", id,
                 teamRequest);
         return teamService.editById(id, teamRequest);
+    }
+
+    @PutMapping("/{id}/invite")
+    public void inviteUserToTeam(@PathVariable Long id, @RequestParam String invitedUserUsername) {
+
+        log.info("Processing new team invitation");
+        teamService.inviteUserToTeam(id, invitedUserUsername);
     }
 }

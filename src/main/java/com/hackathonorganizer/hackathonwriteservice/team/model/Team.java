@@ -2,9 +2,11 @@ package com.hackathonorganizer.hackathonwriteservice.team.model;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class Team {
 
     @Id
@@ -31,10 +34,24 @@ public class Team {
     @CollectionTable(name = "team_members", joinColumns = @JoinColumn(name =
             "team_id"))
     @Column(name = "team_member_id")
-    private Set<Long> teamMembersIds;
+    private Set<Long> teamMembersIds = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "team_tags", joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
+
+    public void addUserToTeam(Long userId) {
+
+        if (!teamMembersIds.add(userId)) {
+            log.info("User with id: {} is already added to team", userId);
+        }
+    }
+
+    public void removeUserFromTeam(Long userId) {
+
+        if (!teamMembersIds.remove(userId)) {
+            log.info("User with id: {} is already added to team", userId);
+        }
+    }
 }

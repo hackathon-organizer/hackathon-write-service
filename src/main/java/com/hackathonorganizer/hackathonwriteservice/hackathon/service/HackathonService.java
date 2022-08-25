@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -104,6 +106,10 @@ public class HackathonService {
 
         log.info("User with id: {} successfully removed from hackathon with " +
                 "id: {}", userId, hackathonId);
+    }
+
+    public Optional<Hackathon> findById(Long id) {
+        return hackathonRepository.findById(id);
     }
 
     private Hackathon saveToRepository(Hackathon hackathon) {
