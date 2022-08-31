@@ -1,6 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.team.model;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
+import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +24,8 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     @NotEmpty
     private Long ownerId;
 
@@ -41,6 +44,9 @@ public class Team {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
 
+    @OneToMany(mappedBy = "team")
+    private Set<TeamInvitation> invitations = new HashSet<>();
+
     public void addUserToTeam(Long userId) {
 
         if (!teamMembersIds.add(userId)) {
@@ -53,5 +59,9 @@ public class Team {
         if (!teamMembersIds.remove(userId)) {
             log.info("User with id: {} is already added to team", userId);
         }
+    }
+
+    public void addUserInvitationToTeam(TeamInvitation teamInvitation) {
+        invitations.add(teamInvitation);
     }
 }

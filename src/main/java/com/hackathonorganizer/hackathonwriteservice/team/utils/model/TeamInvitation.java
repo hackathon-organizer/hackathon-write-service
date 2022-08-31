@@ -1,18 +1,37 @@
 package com.hackathonorganizer.hackathonwriteservice.team.utils.model;
 
+import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
+import lombok.*;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-public record TeamInvitation(
+@Entity(name = "team_invitations")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class TeamInvitation  {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
         @NotNull
-        Long invitedUserId,
-
-        InvitationStatus invitationStatus,
-
-        String teamName,
+        private Long fromUserId;
 
         @NotNull
-        Long teamId
-) {
+        private Long toUserId;
 
+        @Enumerated(EnumType.STRING)
+        private InvitationStatus invitationStatus;
+
+        @NotNull
+        private String teamName;
+
+//        @NotNull
+//        private Long teamId;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        private Team team;
 }

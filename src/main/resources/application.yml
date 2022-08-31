@@ -6,7 +6,7 @@ spring:
       generic:
         enabled: true
         profile-separator: '/'
-        default-context: user-write-service
+        default-context: hackathon-write-service
   jpa:
     properties:
       hibernate:
@@ -17,6 +17,14 @@ spring:
     name: hackathon-write-service
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+  realm: hackathon-organizer
+  resource: hackathon-write-service
+#  masterRealm: master
+#  clientId: admin-cli
+#  username: admin
+#  password: admin
 server:
   port: 0
 

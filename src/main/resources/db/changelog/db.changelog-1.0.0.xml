@@ -34,6 +34,9 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_team_id"/>
             </column>
+            <column type="varchar" name="name">
+                <constraints nullable="false"/>
+            </column>
             <column type="bigint" name="hackathon_id">
                 <constraints nullable="false"/>
             </column>
@@ -99,5 +102,31 @@
         <addForeignKeyConstraint constraintName="fk_hackathon_hackathon_participants_id" referencedTableName="hackathon"
                                  baseColumnNames="hackathon_id"
                                  baseTableName="hackathon_participants" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="add-team-invites" author="Yankes">
+
+        <createTable tableName="team_invitations">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_team_invitation"/>
+            </column>
+            <column name="team_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="team_name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invitation_status" type="varchar" defaultValue="PENDING"/>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_team_team_invitations" referencedTableName="team"
+                                 baseColumnNames="team_id"
+                                 baseTableName="team_invitations" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
 </databaseChangeLog>
