@@ -1,6 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.team.utils.dto;
 
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 
 import java.util.Set;
 

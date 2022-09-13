@@ -1,9 +1,12 @@
-package com.hackathonorganizer.hackathonwriteservice.team.utils.model;
+package com.hackathonorganizer.hackathonwriteservice.team.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
+import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity(name = "team_invitations")
@@ -17,8 +20,8 @@ public class TeamInvitation  {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @NotNull
-        private Long fromUserId;
+        @NotEmpty
+        private String fromUserName;
 
         @NotNull
         private Long toUserId;
@@ -26,12 +29,10 @@ public class TeamInvitation  {
         @Enumerated(EnumType.STRING)
         private InvitationStatus invitationStatus;
 
-        @NotNull
+        @NotEmpty
         private String teamName;
 
-//        @NotNull
-//        private Long teamId;
-
         @ManyToOne(fetch = FetchType.LAZY)
+        @JsonIgnore
         private Team team;
 }

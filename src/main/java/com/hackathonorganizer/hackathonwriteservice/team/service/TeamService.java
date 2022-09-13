@@ -6,18 +6,17 @@ import com.hackathonorganizer.hackathonwriteservice.team.exception.ResourceNotFo
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
+import com.hackathonorganizer.hackathonwriteservice.team.repository.TeamInvitationRepository;
 import com.hackathonorganizer.hackathonwriteservice.team.repository.TeamRepository;
 import com.hackathonorganizer.hackathonwriteservice.team.utils.TeamMapper;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.InvitationStatus;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
+import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +25,13 @@ public class TeamService {
 
 
     private final TeamRepository teamRepository;
+    private final TeamInvitationRepository teamInvitationRepository;
 
     private final TagService tagService;
-
-    private final SimpMessagingTemplate messagingTemplate;
 
     private final HackathonService hackathonService;
 
     private final NotificationService notificationService;
-
-    public static String userId;
 
     public TeamResponse create(TeamRequest teamRequest) {
 
@@ -59,54 +55,68 @@ public class TeamService {
             return TeamMapper.toResponse(teamRepository.save(teamToEdit));
         }).orElseThrow(() -> {
             log.info(String.format("Team id: %d not found", id));
-            return new ResourceNotFoundException(String.format("Team " +
-                    "id: %d not found", id));
+            return new ResourceNotFoundException(String.format("Team with id: %d not found", id));
         });
     }
-
-
 
     private Hackathon getHackathonById(Long hackathonId) {
 
         return hackathonService.findById(hackathonId).orElseThrow(() -> {
-            log.info("Hacathon id: {} not found", hackathonId);
+            log.info("Hackathon with id: {} not found", hackathonId);
             throw new ResourceNotFoundException(String.format(
-                    "Hacathon id: %d not found", hackathonId));
+                    "Hackathon with id: %d not found", hackathonId));
         });
     }
 
+    public void processInvitation(Long teamId, Long userId, String fromUserUsername) {
 
-    public void processInvitation(Long teamId,
-            String userId, TeamInvitation teamInvitation) {
+        Team team = teamRepository.findById(teamId)
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                String.format("Team with id: %d not found", teamId)));
 
-        Team team = teamRepository.findById(teamId).orElseThrow();
-
-        TeamInvitation teamInvitation1 =
-                TeamInvitation.builder()
-                        // .teamId(team.getId())
+        TeamInvitation teamInvitation = TeamInvitation.builder()
                         .teamName(team.getName())
                         .invitationStatus(InvitationStatus.PENDING)
-                        .fromUserId(1L)
-                        .toUserId(12L)
+                        .fromUserName(fromUserUsername)
+                        .toUserId(userId)
+                        .team(team)
                         .build();
 
-       team.addUserInvitationToTeam(teamInvitation1);
+       TeamInvitation savedInvite = this.teamInvitationRepository.save(teamInvitation);
+
+       team.addUserInvitationToTeam(savedInvite);
 
        teamRepository.save(team);
 
-       notificationService.sendTeamInviteNotification(teamInvitation1);
+       log.info("Invitation with id: {} saved successfully", savedInvite.getId());
+
+       TeamInvitationDto inviteDto = TeamMapper.mapToTeamInvitationDto(savedInvite);
+
+       notificationService.sendTeamInviteNotification(inviteDto);
     }
 
-    public void findInvitesByUserId(String id) {
+    public void updateInvitationStatus(TeamInvitationDto teamInvitationDto) {
 
-        // TODO send db query where inv.status == PENDING
+        Team team = teamRepository.findById(teamInvitationDto.teamId())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                String.format("Team with id: %d not found", teamInvitationDto.teamId())));
 
-//        Set<TeamInvitation> x = teamRepository.findInvitationsId(id);
-//
-//        x.forEach(inv -> {
-//            if (inv.getInvitationStatus().equals(InvitationStatus.PENDING)) {
-//                notificationService.sendTeamInviteNotification(inv);
-//            }
-//        });
+        TeamInvitation teamInvitation = teamInvitationRepository.findById(teamInvitationDto.id())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Invitation with id: %d not " + "found", teamInvitationDto.id())));
+
+        if (teamInvitationDto.invitationStatus() == InvitationStatus.ACCEPTED) {
+            teamInvitation.setInvitationStatus(InvitationStatus.ACCEPTED);
+            team.addUserToTeam(teamInvitationDto.toUserId());
+
+            log.info("User {} added to team", teamInvitationDto.fromUserName());
+        } else {
+            teamInvitation.setInvitationStatus(InvitationStatus.REJECTED);
+        }
+
+        teamRepository.save(team);
+        teamInvitationRepository.save(teamInvitation);
+
+        log.info("Invitation with id: {} status updated", teamInvitation.getId());
     }
 }

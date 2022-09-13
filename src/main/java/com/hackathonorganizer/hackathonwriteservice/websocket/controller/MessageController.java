@@ -1,7 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.websocket.controller;
 
-import com.hackathonorganizer.hackathonwriteservice.team.service.TeamService;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +17,11 @@ public class MessageController {
 
     @MessageMapping("/private-message")
     @SendToUser("/topic/private-messages")
-    public void inviteUserToTeam(TeamInvitation teamInvitation) throws InterruptedException {
+    public void inviteUserToTeam(TeamInvitationDto teamInvitation) {
 
         notificationService.sendTeamInviteNotification(teamInvitation);
 
-        log.info("User id: {} send invite to team", 1);
+        log.info("User id: {} send invite to team", NotificationService.userId);
     }
 
 }

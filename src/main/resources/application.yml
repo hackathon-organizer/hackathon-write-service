@@ -21,10 +21,6 @@ keycloak:
   auth-server-url: http://localhost:8080/auth
   realm: hackathon-organizer
   resource: hackathon-write-service
-#  masterRealm: master
-#  clientId: admin-cli
-#  username: admin
-#  password: admin
 server:
   port: 0
 

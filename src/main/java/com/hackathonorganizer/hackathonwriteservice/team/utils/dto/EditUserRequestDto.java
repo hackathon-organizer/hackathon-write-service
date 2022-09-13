@@ -1,8 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.team.utils.dto;
 
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 

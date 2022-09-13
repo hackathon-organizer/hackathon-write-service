@@ -1,7 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.team.model;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.model.TeamInvitation;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,6 +61,9 @@ public class Team {
     }
 
     public void addUserInvitationToTeam(TeamInvitation teamInvitation) {
-        invitations.add(teamInvitation);
+
+        if (!invitations.add(teamInvitation)) {
+            log.info("Invitation with id: {} already added to team", teamInvitation.getId());
+        }
     }
 }

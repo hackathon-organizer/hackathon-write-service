@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket")
+        registry.addEndpoint("/hackathon-websocket")
                 .setHandshakeHandler(new UserHandshakeHandler())
                 .setAllowedOrigins("*");
         registry.addEndpoint("/sockjs")

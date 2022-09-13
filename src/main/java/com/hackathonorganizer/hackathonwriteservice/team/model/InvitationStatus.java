@@ -1,4 +1,4 @@
-package com.hackathonorganizer.hackathonwriteservice.team.utils.model;
+package com.hackathonorganizer.hackathonwriteservice.team.model;
 
 public enum InvitationStatus {
     PENDING,
