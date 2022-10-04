@@ -6,6 +6,8 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.Hackatho
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.utils.HackathonMapper;
+import com.hackathonorganizer.hackathonwriteservice.team.utils.Rest;
+import com.hackathonorganizer.hackathonwriteservice.team.utils.dto.UserMembershipRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class HackathonService {
 
     private final HackathonRepository hackathonRepository;
+    private final Rest rest;
 
     public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
 
@@ -26,6 +29,7 @@ public class HackathonService {
                 .name(hackathonRequest.name())
                 .description(hackathonRequest.description())
                 .organizerInfo(hackathonRequest.organizerInfo())
+                .ownerId(hackathonRequest.ownerId())
                 .eventStartDate(hackathonRequest.eventStartDate())
                 .eventEndDate(hackathonRequest.eventEndDate())
                 .build();
@@ -88,6 +92,11 @@ public class HackathonService {
         hackathon.addUserToHackathonParticipants(userId);
 
         saveToRepository(hackathon);
+
+        UserMembershipRequest userMembershipRequest =
+                new UserMembershipRequest(hackathonId, 0L);
+
+        rest.updateUserHackathonId(userId, userMembershipRequest);
 
         log.info("User with id: {} successfully added to hackathon with id: " +
                 "{}", userId, hackathonId);

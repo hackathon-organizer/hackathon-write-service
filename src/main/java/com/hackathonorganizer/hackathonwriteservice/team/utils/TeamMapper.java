@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class TeamMapper {
 
-    public static TeamResponse toResponse(Team team) {
+    public static TeamResponse mapToTeamDto(Team team) {
         return new TeamResponse(
                 team.getId(),
                 team.getOwnerId(),

@@ -12,6 +12,8 @@ import com.hackathonorganizer.hackathonwriteservice.team.utils.TeamMapper;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.utils.Rest;
+import com.hackathonorganizer.hackathonwriteservice.team.utils.dto.UserMembershipRequest;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,23 +28,36 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamInvitationRepository teamInvitationRepository;
-
     private final TagService tagService;
-
     private final HackathonService hackathonService;
-
     private final NotificationService notificationService;
+    private final Rest rest;
 
     public TeamResponse create(TeamRequest teamRequest) {
 
+        Hackathon hackathon = getHackathonById(teamRequest.hackathonId());
+
+        System.out.println(hackathon.getName());
+
         val teamToSave = Team.builder()
+                .name(teamRequest.name())
+                .description(teamRequest.description())
                 .ownerId(teamRequest.ownerId())
-                .hackathon(getHackathonById(teamRequest.hackathonId()))
-                .teamMembersIds(teamRequest.teamMembersIds())
+                .hackathon(hackathon)
                 .tags(teamRequest.tags())
                 .build();
         log.info("Trying to save new team {}", teamToSave);
-        return TeamMapper.toResponse(teamRepository.save(teamToSave));
+
+        // TODO send req to update user's currTeamId
+
+        Team savedTeam = teamRepository.save(teamToSave);
+
+        UserMembershipRequest userHackathonMembershipRequest =
+                new UserMembershipRequest(teamRequest.hackathonId(), savedTeam.getId());
+
+        rest.updateUserHackathonId(savedTeam.getId(), userHackathonMembershipRequest);
+
+        return TeamMapper.mapToTeamDto(savedTeam);
     }
 
     public TeamResponse editById(Long id, TeamRequest teamRequest) {
@@ -50,9 +65,9 @@ public class TeamService {
         return teamRepository.findById(id).map(teamToEdit -> {
             teamToEdit.setOwnerId(teamRequest.ownerId());
             teamToEdit.setHackathon(getHackathonById(teamRequest.hackathonId()));
-            teamToEdit.setTeamMembersIds(teamRequest.teamMembersIds());
+//            teamToEdit.setTeamMembersIds(teamRequest.teamMembersIds());
             teamToEdit.setTags(teamRequest.tags());
-            return TeamMapper.toResponse(teamRepository.save(teamToEdit));
+            return TeamMapper.mapToTeamDto(teamRepository.save(teamToEdit));
         }).orElseThrow(() -> {
             log.info(String.format("Team id: %d not found", id));
             return new ResourceNotFoundException(String.format("Team with id: %d not found", id));
@@ -108,6 +123,13 @@ public class TeamService {
         if (teamInvitationDto.invitationStatus() == InvitationStatus.ACCEPTED) {
             teamInvitation.setInvitationStatus(InvitationStatus.ACCEPTED);
             team.addUserToTeam(teamInvitationDto.toUserId());
+
+            UserMembershipRequest userHackathonMembershipRequest =
+                    new UserMembershipRequest(team.getHackathon().getId(),
+                            team.getId());
+
+            rest.updateUserHackathonId(team.getId(),
+                    userHackathonMembershipRequest);
 
             log.info("User {} added to team", teamInvitationDto.fromUserName());
         } else {

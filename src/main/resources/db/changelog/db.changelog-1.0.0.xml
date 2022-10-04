@@ -129,4 +129,33 @@
                                  baseColumnNames="team_id"
                                  baseTableName="team_invitations" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
+
+
+    <changeSet id="add-hackathon-owner-id" author="Yankes">
+
+        <addColumn tableName="hackathon">
+            <column name="owner_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="team">
+            <column name="description" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+
+    <changeSet id="add-team-is-open-flag" author="Yankes">
+
+        <addColumn tableName="team">
+            <column name="is_open" type="bool" defaultValue="true">
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+
 </databaseChangeLog>

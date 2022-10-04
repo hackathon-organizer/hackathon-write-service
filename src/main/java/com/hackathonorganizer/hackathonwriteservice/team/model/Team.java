@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +26,16 @@ public class Team {
 
     private String name;
 
-    @NotEmpty
+    @NotNull
     private Long ownerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotEmpty
+    private String description;
+
+    private boolean isOpen;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Hackathon hackathon;
 
     @ElementCollection

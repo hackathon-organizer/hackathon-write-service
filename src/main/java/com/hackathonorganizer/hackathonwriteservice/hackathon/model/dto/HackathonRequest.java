@@ -23,6 +23,9 @@ public record HackathonRequest(
 
         @NotNull
         @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-        LocalDateTime eventEndDate
+        LocalDateTime eventEndDate,
+
+        @NotNull
+        Long ownerId
 ) {
 }
