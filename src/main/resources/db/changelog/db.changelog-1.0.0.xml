@@ -151,7 +151,7 @@
     <changeSet id="add-team-is-open-flag" author="Yankes">
 
         <addColumn tableName="team">
-            <column name="is_open" type="bool" defaultValue="true">
+            <column name="is_open" type="boolean" defaultValue="true" defaultValueBoolean="true">
             </column>
         </addColumn>
 

@@ -3,6 +3,7 @@ package com.hackathonorganizer.hackathonwriteservice.team.model;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -32,7 +33,11 @@ public class Team {
     @NotEmpty
     private String description;
 
-    private boolean isOpen;
+
+    @NotNull
+    @Builder.Default
+    @ColumnDefault("true")
+    private Boolean isOpen = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull

@@ -47,4 +47,11 @@ public class TeamController {
         log.info("Updating team: {} invitation status", teamInvitation.teamId());
         teamService.updateInvitationStatus(teamInvitation);
     }
+
+    @PatchMapping("/{id}/participants/{userId}")
+    public void addUserToTeam(@PathVariable("id") Long teamId,
+            @PathVariable("userId") Long userId) {
+
+        teamService.addUserToTeam(teamId, userId);
+    }
 }

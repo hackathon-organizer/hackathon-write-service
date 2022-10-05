@@ -1,13 +1,13 @@
 package com.hackathonorganizer.hackathonwriteservice.team.service;
 
-import com.hackathonorganizer.hackathonwriteservice.team.exception.ResourceAlreadyExistsException;
-import com.hackathonorganizer.hackathonwriteservice.team.exception.ResourceNotFoundException;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.TeamException;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Tag;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TagRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,8 +33,8 @@ public class TagService {
                             .build());
                 }).orElseThrow(() -> {
                     log.info(String.format("Tag id: %d not found", id));
-                    return new ResourceNotFoundException(String.format("Tag " +
-                            "id: %d not found", id));
+                    return new TeamException(String.format("Tag " +
+                            "id: %d not found", id), HttpStatus.NOT_FOUND);
                 });
     }
 
@@ -43,8 +43,8 @@ public class TagService {
         if (tagRepository.existsById(id)) {
             tagRepository.deleteById(id);
         } else {
-            throw new ResourceNotFoundException(String.format("Tag id: %d " +
-                    "not found", id));
+            throw new TeamException(String.format("Tag id: %d " +
+                    "not found", id), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -58,8 +58,8 @@ public class TagService {
 
         return tagRepository.findByNameIgnoreCase(name).orElseThrow(() -> {
                     log.info(String.format("Tag name %s not found", name));
-                    throw new ResourceAlreadyExistsException(String.format(
-                            "Tag name %s not found", name));
+                    throw new TeamException(String.format(
+                            "Tag name %s not found", name), HttpStatus.NOT_FOUND);
         });
     }
 
