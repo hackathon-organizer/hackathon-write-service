@@ -157,5 +157,14 @@
 
     </changeSet>
 
+    <changeSet id="add-team-chat-room-id" author="Yankes">
+
+        <addColumn tableName="team">
+            <column name="chat_room_id" type="bigint">
+            </column>
+        </addColumn>
+
+    </changeSet>
+
 
 </databaseChangeLog>

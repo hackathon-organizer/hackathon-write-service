@@ -8,12 +8,12 @@ import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import com.hackathonorganizer.hackathonwriteservice.team.repository.TeamInvitationRepository;
 import com.hackathonorganizer.hackathonwriteservice.team.repository.TeamRepository;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.TeamMapper;
+import com.hackathonorganizer.hackathonwriteservice.utils.TeamMapper;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.Rest;
-import com.hackathonorganizer.hackathonwriteservice.team.utils.dto.UserMembershipRequest;
+import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
+import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class TeamService {
     private final TagService tagService;
     private final HackathonService hackathonService;
     private final NotificationService notificationService;
-    private final Rest rest;
+    private final RestCommunicator restCommunicator;
 
     public TeamResponse create(TeamRequest teamRequest) {
 
@@ -51,10 +51,20 @@ public class TeamService {
 
         Team savedTeam = teamRepository.save(teamToSave);
 
+        log.info("Team with id: " + savedTeam.getId() + " saved successfully");
+
         UserMembershipRequest userHackathonMembershipRequest =
                 new UserMembershipRequest(teamRequest.hackathonId(), savedTeam.getId());
 
-        rest.updateUserHackathonId(savedTeam.getId(), userHackathonMembershipRequest);
+        restCommunicator.updateUserHackathonId(teamRequest.ownerId(), userHackathonMembershipRequest);
+
+        // TODO move to another method
+
+        Long chatId = restCommunicator.createTeamChatRoom(savedTeam.getId());
+
+        savedTeam.setChatRoomId(chatId);
+
+        teamRepository.save(savedTeam);
 
         return TeamMapper.mapToTeamDto(savedTeam);
     }
@@ -133,7 +143,7 @@ public class TeamService {
                     new UserMembershipRequest(team.getHackathon().getId(),
                             team.getId());
 
-            rest.updateUserHackathonId(team.getId(),
+            restCommunicator.updateUserHackathonId(team.getId(),
                     userHackathonMembershipRequest);
 
             log.info("User {} added to team", teamInvitationDto.fromUserName());

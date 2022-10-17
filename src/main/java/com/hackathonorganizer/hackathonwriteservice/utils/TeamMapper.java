@@ -1,4 +1,4 @@
-package com.hackathonorganizer.hackathonwriteservice.team.utils;
+package com.hackathonorganizer.hackathonwriteservice.utils;
 
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
@@ -16,6 +16,7 @@ public class TeamMapper {
                 team.getOwnerId(),
                 team.getHackathon().getId(),
                 team.getTeamMembersIds(),
+                team.getChatRoomId(),
                 team.getTags());
     }
 

@@ -10,6 +10,7 @@ public record TeamResponse(
         Long ownerId,
         Long hackathonId,
         Set<Long> teamMembersIds,
+        Long teamChatRoomId,
         List<Tag> tags
 ) {
 

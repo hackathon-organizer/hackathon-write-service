@@ -1,4 +1,4 @@
-package com.hackathonorganizer.hackathonwriteservice.team.utils.dto;
+package com.hackathonorganizer.hackathonwriteservice.utils.dto;
 
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 

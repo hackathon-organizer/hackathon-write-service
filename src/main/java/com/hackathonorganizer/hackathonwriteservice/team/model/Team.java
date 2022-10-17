@@ -39,6 +39,8 @@ public class Team {
     @ColumnDefault("true")
     private Boolean isOpen = true;
 
+    private Long chatRoomId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Hackathon hackathon;
