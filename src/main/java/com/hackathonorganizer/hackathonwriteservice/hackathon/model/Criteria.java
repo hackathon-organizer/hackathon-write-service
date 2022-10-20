@@ -6,7 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -14,6 +16,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Criteria {
 
     @Id
@@ -28,7 +31,12 @@ public class Criteria {
     @JoinColumn(name = "hackathon_id")
     private Hackathon hackathon;
 
-    @OneToMany(mappedBy = "criteria")
+    @OneToMany(mappedBy = "criteria", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<CriteriaAnswer> criteriaAnswers = new ArrayList<>();
+    private Set<CriteriaAnswer> criteriaAnswers = new HashSet<>();
+
+    public void addAnswer(CriteriaAnswer answer) {
+
+        criteriaAnswers.add(answer);
+    }
 }

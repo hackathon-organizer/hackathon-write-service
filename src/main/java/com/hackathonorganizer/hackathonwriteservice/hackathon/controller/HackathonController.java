@@ -1,5 +1,8 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.controller;
 
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/write/hackathons")
@@ -70,5 +74,14 @@ public class HackathonController {
         log.info("Trying to save criteria to hackathon with id {}", hackathonId);
 
         hackathonService.addRateCriteriaToHackathon(hackathonId, criteriaRequest.criteria());
+    }
+
+    @PatchMapping("/{id}/criteria")
+    public void saveTeamRatingAnswer(@PathVariable("id") Long hackathonId,
+            @RequestBody List<CriteriaAnswerRequest> criteria) {
+
+        log.info("Trying to save criteria answer to hackathon with id {}", hackathonId);
+
+        hackathonService.saveCriteriaAnswers(criteria);
     }
 }

@@ -202,4 +202,15 @@
                                  constraintName="fk_criteria__criteria_answer" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
 
+    <changeSet id="update-criteria-answer" author="Yankes">
+        <addColumn tableName="criteria_answer">
+            <column name="team_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

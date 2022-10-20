@@ -2,9 +2,12 @@ package com.hackathonorganizer.hackathonwriteservice.hackathon.service;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaAnswerRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.utils.HackathonMapper;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +30,7 @@ public class HackathonService {
     private final HackathonRepository hackathonRepository;
     private final RestCommunicator restCommunicator;
     private final CriteriaRepository criteriaRepository;
+    private final CriteriaAnswerRepository criteriaAnswerRepository;
 
     public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
 
@@ -131,6 +136,7 @@ public class HackathonService {
 
     public void addRateCriteriaToHackathon(Long hackathonId, List<Criteria> criteria) {
 
+
         Hackathon hackathon = hackathonRepository.findById(hackathonId).orElseThrow();
 
         List<Criteria> saved = criteria.stream().peek(criteria1 -> {
@@ -142,5 +148,20 @@ public class HackathonService {
         }).toList();
 
         log.info("Criteria for hackathon {} saved successfully", hackathonId);
+    }
+
+    public void saveCriteriaAnswers(List<CriteriaAnswerRequest> criteriaAnswers) {
+
+        criteriaAnswers.forEach(criteriaRequest -> {
+
+            Criteria criteria = criteriaRepository.findById(criteriaRequest.id()).orElseThrow();
+
+            criteriaRequest.criteriaAnswer().setCriteria(criteria);
+            criteria.addAnswer(criteriaRequest.criteriaAnswer());
+
+            criteriaRepository.save(criteria);
+        });
+
+        log.info("Criteria answers for hackathon saved successfully");
     }
 }
