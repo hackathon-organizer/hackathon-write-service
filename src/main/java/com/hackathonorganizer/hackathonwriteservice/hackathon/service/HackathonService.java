@@ -2,12 +2,11 @@ package com.hackathonorganizer.hackathonwriteservice.hackathon.service;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerRequest;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaAnswerRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.utils.HackathonMapper;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -28,9 +26,10 @@ import java.util.Set;
 public class HackathonService {
 
     private final HackathonRepository hackathonRepository;
+
     private final RestCommunicator restCommunicator;
+
     private final CriteriaRepository criteriaRepository;
-    private final CriteriaAnswerRepository criteriaAnswerRepository;
 
     public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
 
@@ -115,8 +114,9 @@ public class HackathonService {
             Long userId) {
         Hackathon hackathon = hackathonRepository.findById(hackathonId)
                 .orElseThrow(() -> new HackathonException(
-                String.format("Hackathon with id: %d not found", hackathonId),
-                HttpStatus.NOT_FOUND));
+                        String.format("Hackathon with id: %d not found",
+                                hackathonId),
+                        HttpStatus.NOT_FOUND));
 
         hackathon.removeUserFromHackathonParticipants(userId);
 
@@ -134,18 +134,62 @@ public class HackathonService {
         return hackathonRepository.save(hackathon);
     }
 
-    public void addRateCriteriaToHackathon(Long hackathonId, List<Criteria> criteria) {
+    public void addRateCriteriaToHackathon(Long hackathonId,
+            List<CriteriaDto> criteria) {
 
 
-        Hackathon hackathon = hackathonRepository.findById(hackathonId).orElseThrow();
+        Hackathon hackathon =
+                hackathonRepository.findById(hackathonId).orElseThrow();
 
-        List<Criteria> saved = criteria.stream().peek(criteria1 -> {
+        criteria.forEach(criteria1 -> {
 
-            criteria1.setHackathon(hackathon);
+            Criteria c = Criteria.builder()
+                    .name(criteria1.name())
+                    .build();
 
-            criteriaRepository.save(criteria1);
+            c.setHackathon(hackathon);
 
-        }).toList();
+            criteriaRepository.save(c);
+
+        });
+
+        log.info("Criteria for hackathon {} saved successfully", hackathonId);
+    }
+
+    public void updateRateCriteriaToHackathon(Long hackathonId,
+            List<CriteriaDto> criteria) {
+
+        Hackathon hackathon =
+                hackathonRepository.findById(hackathonId).orElseThrow();
+
+
+        System.out.println(criteria.toString());
+
+        criteria.forEach(criteria1 -> {
+
+            Criteria c;
+
+            if (criteriaRepository.existsCriteriaByNameAndHackathonId(criteria1.name(), criteria1.hackathonId())) {
+
+               return;
+            } else {
+
+                if (criteria1.id() != null) {
+                    c = criteriaRepository.findById(criteria1.id()).orElseThrow();
+
+                    c.setName(criteria1.name().trim());
+                    c.setHackathon(hackathon);
+                } else {
+                    c = Criteria.builder()
+                            .name(criteria1.name().trim())
+                            .hackathon(hackathon)
+                            .build();
+                }
+            }
+
+            criteriaRepository.save(c);
+
+        });
 
         log.info("Criteria for hackathon {} saved successfully", hackathonId);
     }
@@ -154,7 +198,8 @@ public class HackathonService {
 
         criteriaAnswers.forEach(criteriaRequest -> {
 
-            Criteria criteria = criteriaRepository.findById(criteriaRequest.id()).orElseThrow();
+            Criteria criteria =
+                    criteriaRepository.findById(criteriaRequest.id()).orElseThrow();
 
             criteriaRequest.criteriaAnswer().setCriteria(criteria);
             criteria.addAnswer(criteriaRequest.criteriaAnswer());
@@ -163,5 +208,12 @@ public class HackathonService {
         });
 
         log.info("Criteria answers for hackathon saved successfully");
+    }
+
+    public void deleteCriteria(Long criteriaId) {
+
+        criteriaRepository.deleteById(criteriaId);
+
+        log.info("Criteria was deleted successfully");
     }
 }

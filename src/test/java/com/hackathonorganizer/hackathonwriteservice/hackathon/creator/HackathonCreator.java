@@ -29,6 +29,7 @@ public class HackathonCreator {
                         .organizerInfo(organizerInfo)
                         .eventStartDate(eventStartDate)
                         .eventEndDate(eventEndDate)
+                        .ownerId(1L)
                         .build()
         );
     }

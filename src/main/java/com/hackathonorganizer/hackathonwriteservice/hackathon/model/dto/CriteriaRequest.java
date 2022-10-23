@@ -5,7 +5,7 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import java.util.List;
 
 public record CriteriaRequest(
-        List<Criteria> criteria
+        List<CriteriaDto> criteria
 ) {
 
 }

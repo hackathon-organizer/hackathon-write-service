@@ -32,7 +32,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldCreateNewHackathon() throws Exception {
         // given
-        String url = "/api/v1/hackathons";
+        String url = "/api/v1/write/hackathons";
 
         HackathonRequest request = buildHackathonRequest();
 
@@ -50,7 +50,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldEditHackathon() throws Exception {
         // given
-        String url = "/api/v1/hackathons/";
+        String url = "/api/v1/write/hackathons/";
         Long id = 1L;
         String name = "Hackathon edited";
         String desc = "Hackathon desc edited";
@@ -59,7 +59,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         LocalDateTime eventEndDate = LocalDateTime.now().plusDays(1);
 
         HackathonRequest request = new HackathonRequest(name, desc,
-                organizerInfo, eventStartDate, eventEndDate);
+                organizerInfo, eventStartDate, eventEndDate, 1L);
 
         Hackathon savedHackathon = hackathonCreator.createHackathon();
 
@@ -79,7 +79,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldThrowHackathonNotFound() throws Exception {
         // given
-        String url = "/api/v1/hackathons/";
+        String url = "/api/v1/write/hackathons/";
 
         HackathonRequest request = buildHackathonRequest();
 
@@ -99,7 +99,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldDeactivateHackathon() throws Exception {
         // given
-        String url = "/api/v1/hackathons/";
+        String url = "/api/v1/write/hackathons/";
 
         Hackathon savedHackathon = hackathonCreator.createHackathon();
 
@@ -114,16 +114,20 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldAddUserToHackathonParticipants() throws Exception {
         // given
-        String url = "/api/v1/hackathons/";
+        String url = "/api/v1/write/hackathons/";
         String participantId = "9";
 
         Hackathon savedHackathon = hackathonCreator.createHackathon();
+
+
 
         // when
         ResultActions resultActions =
                 mockMvc.perform(patchJsonRequest(url,
                         null, String.valueOf(savedHackathon.getId()),
                         "participants", participantId));
+
+        //mockMvc.perform(putJsonRequest("/api/v1/write/users/9/membership",null));
 
         // then
         resultActions.andExpect(status().isOk());
@@ -133,7 +137,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     void shouldRemoveUserFromHackathonParticipants() throws Exception {
         // given
-        String url = "/api/v1/hackathons/";
+        String url = "/api/v1/write/hackathons/";
         String participantId = "9";
 
         Hackathon savedHackathon = hackathonCreator.createHackathon();
@@ -156,7 +160,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         LocalDateTime eventEndDate = LocalDateTime.of(2022, 12, 13, 13, 0);
 
         return new HackathonRequest(name, desc,
-                organizerInfo, eventStartDate, eventEndDate);
+                organizerInfo, eventStartDate, eventEndDate, 1L);
     }
 
 }

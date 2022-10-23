@@ -5,6 +5,7 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
+import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +32,8 @@ public class HackathonServiceTests {
     @Mock
     private HackathonRepository hackathonRepository;
 
+    @Mock
+    private RestCommunicator restCommunicator;
     @Captor
     private ArgumentCaptor<Hackathon> hackathonCaptor;
 
@@ -77,7 +80,7 @@ public class HackathonServiceTests {
                 .updateHackathonData(5L, new HackathonRequest("Edited " +
                         "Hackathon",
                         "Edited Desc", "Org info",
-                        LocalDateTime.now(), LocalDateTime.now().plusDays(1)));
+                        LocalDateTime.now(), LocalDateTime.now().plusDays(1), 1L));
 
         // then
         verify(hackathonRepository).save(hackathonCaptor.capture());
@@ -100,7 +103,7 @@ public class HackathonServiceTests {
                         new HackathonRequest("Edited Hackathon",
                                 "Edited Desc", "Org info",
                                 LocalDateTime.now(),
-                                LocalDateTime.now().plusDays(1))));
+                                LocalDateTime.now().plusDays(1), 1L)));
 
         //then
         verify(hackathonRepository).findById(anyLong());
@@ -196,6 +199,6 @@ public class HackathonServiceTests {
         LocalDateTime eventEndDate = LocalDateTime.now().plusDays(1);
 
         return new HackathonRequest(name, desc,
-                organizerInfo, eventStartDate, eventEndDate);
+                organizerInfo, eventStartDate, eventEndDate, 1L);
     }
 }
