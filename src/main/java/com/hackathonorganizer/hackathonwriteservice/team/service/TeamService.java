@@ -56,7 +56,7 @@ public class TeamService {
         UserMembershipRequest userHackathonMembershipRequest =
                 new UserMembershipRequest(teamRequest.hackathonId(), savedTeam.getId());
 
-        restCommunicator.updateUserHackathonId(teamRequest.ownerId(), userHackathonMembershipRequest);
+        restCommunicator.updateUserMembership(teamRequest.ownerId(), userHackathonMembershipRequest);
 
         // TODO move to another method
 
@@ -143,7 +143,7 @@ public class TeamService {
                     new UserMembershipRequest(team.getHackathon().getId(),
                             team.getId());
 
-            restCommunicator.updateUserHackathonId(team.getId(),
+            restCommunicator.updateUserMembership(team.getId(),
                     userHackathonMembershipRequest);
 
             log.info("User {} added to team", teamInvitationDto.fromUserName());
@@ -167,6 +167,13 @@ public class TeamService {
         if (team.getIsOpen()) {
 
             team.addUserToTeam(userId);
+
+            UserMembershipRequest userHackathonMembershipRequest =
+                    new UserMembershipRequest(team.getHackathon().getId(), team.getId());
+
+            restCommunicator.updateUserMembership(userId, userHackathonMembershipRequest);
+
+            log.info("Updating user with id: {} team with id: {} team membership", userId, teamId);
 
             teamRepository.save(team);
 

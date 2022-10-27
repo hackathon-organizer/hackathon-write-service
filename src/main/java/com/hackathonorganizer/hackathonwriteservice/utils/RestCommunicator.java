@@ -14,8 +14,7 @@ public class RestCommunicator {
 
     private final RestTemplate restTemplate;
 
-    public void updateUserHackathonId(Long userId,
-            UserMembershipRequest userMembershipRequest) {
+    public void updateUserMembership(Long userId, UserMembershipRequest userMembershipRequest) {
 
         restTemplate.put("http://localhost:9090/api/v1/write/users/"
                  + userId + "/membership", userMembershipRequest);
