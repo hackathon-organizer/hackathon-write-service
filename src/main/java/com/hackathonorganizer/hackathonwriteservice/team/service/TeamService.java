@@ -194,6 +194,9 @@ public class TeamService {
 
         Team savedTeam = teamRepository.save(team);
 
+        log.info("Team with id: {} is now {}", savedTeam.getId(),
+                savedTeam.getIsOpen() ? "open" : "closed");
+
         return savedTeam.getIsOpen();
     }
 }

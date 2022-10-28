@@ -37,7 +37,7 @@ public class TeamController {
     public boolean openOrCloseTeamForMembers(@PathVariable Long id,
             @RequestBody boolean isOpen) {
 
-        log.info("Processing new team id: {} edit", id);
+        log.info("Processing team with id: {} open/close", id);
         return teamService.openOrCloseTeamForMembers(id, isOpen);
     }
 
