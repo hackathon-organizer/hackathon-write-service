@@ -185,4 +185,15 @@ public class TeamService {
                     "accepting new members", HttpStatus.CONFLICT);
         }
     }
+
+    public boolean openOrCloseTeamForMembers(Long id, boolean isOpen) {
+
+        Team team = teamRepository.findById(id).orElseThrow();
+
+        team.setIsOpen(isOpen);
+
+        Team savedTeam = teamRepository.save(team);
+
+        return savedTeam.getIsOpen();
+    }
 }

@@ -33,6 +33,14 @@ public class TeamController {
         return teamService.editById(id, teamRequest);
     }
 
+    @PatchMapping("/{id}")
+    public boolean openOrCloseTeamForMembers(@PathVariable Long id,
+            @RequestBody boolean isOpen) {
+
+        log.info("Processing new team id: {} edit", id);
+        return teamService.openOrCloseTeamForMembers(id, isOpen);
+    }
+
     @PostMapping("/{teamId}/invite/{userId}")
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId, @RequestParam("username") String username) {
