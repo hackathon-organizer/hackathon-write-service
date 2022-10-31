@@ -9,16 +9,19 @@ import java.util.Set;
 
 public record TeamRequest(
 
+        @NotNull
         Long ownerId,
 
         @NotEmpty
         String name,
 
+        @NotEmpty
         String description,
 
         @NotNull
         Long hackathonId,
 
+        @NotNull
         List<Tag> tags
 ) {
 
