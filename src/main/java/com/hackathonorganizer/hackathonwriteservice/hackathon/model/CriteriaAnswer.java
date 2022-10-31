@@ -1,6 +1,9 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,6 +15,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CriteriaAnswer {
 
     @Id
@@ -20,10 +26,10 @@ public class CriteriaAnswer {
 
     private Integer value;
 
-    @NotNull
+    @NotNull(message = "Team can not be null!")
     private Long teamId;
 
-    @NotNull
+    @NotNull(message = "User id can not be null!")
     private Long userId;
 
     @ManyToOne

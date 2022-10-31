@@ -20,16 +20,16 @@ public class TeamInvitation  {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @NotEmpty
+        @NotEmpty(message = "From user name can not be empty!")
         private String fromUserName;
 
-        @NotNull
+        @NotNull(message = "To user id can not be null!")
         private Long toUserId;
 
         @Enumerated(EnumType.STRING)
         private InvitationStatus invitationStatus;
 
-        @NotEmpty
+        @NotEmpty(message = "Team name can not be empty!")
         private String teamName;
 
         @ManyToOne(fetch = FetchType.LAZY)

@@ -1,14 +1,16 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-public record CriteriaDto (
+public record CriteriaAnswerDto(
         @NotNull
         Long id,
-        @NotEmpty
-        String name,
         @NotNull
-        Long hackathonId
+        Integer value,
+        @NotNull
+        Long teamId,
+        @NotNull
+        Long userId
 ) {
+
 }

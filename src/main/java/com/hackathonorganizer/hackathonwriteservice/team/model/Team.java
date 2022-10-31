@@ -25,12 +25,13 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "Name can not be empty!")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Owner id can not be null!")
     private Long ownerId;
 
-    @NotEmpty
+    @NotEmpty(message = "Description can not be empty!")
     private String description;
 
 
@@ -42,7 +43,7 @@ public class Team {
     private Long chatRoomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+    @NotNull(message = "Hackathon can not be null!")
     private Hackathon hackathon;
 
     @ElementCollection

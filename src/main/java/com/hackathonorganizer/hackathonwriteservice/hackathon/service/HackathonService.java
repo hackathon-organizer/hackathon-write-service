@@ -2,7 +2,9 @@ package com.hackathonorganizer.hackathonwriteservice.hackathon.service;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
@@ -195,19 +197,26 @@ public class HackathonService {
     }
 
     public void saveCriteriaAnswers(List<CriteriaAnswerRequest> criteriaAnswers) {
-
         criteriaAnswers.forEach(criteriaRequest -> {
-
             Criteria criteria =
                     criteriaRepository.findById(criteriaRequest.id()).orElseThrow();
-
-            criteriaRequest.criteriaAnswer().setCriteria(criteria);
-            criteria.addAnswer(criteriaRequest.criteriaAnswer());
+            CriteriaAnswer criteriaAnswer = buildCriteriaAnswer(criteriaRequest, criteria);
+            criteria.addAnswer(criteriaAnswer);
 
             criteriaRepository.save(criteria);
         });
-
         log.info("Criteria answers for hackathon saved successfully");
+    }
+
+    private CriteriaAnswer buildCriteriaAnswer(CriteriaAnswerRequest criteriaRequest, Criteria criteria) {
+        CriteriaAnswerDto criteriaAnswerDto = criteriaRequest.criteriaAnswer();
+        return CriteriaAnswer.builder()
+                .id(criteriaAnswerDto.id())
+                .value(criteriaAnswerDto.value())
+                .teamId(criteriaAnswerDto.teamId())
+                .userId(criteriaAnswerDto.userId())
+                .criteria(criteria)
+                .build();
     }
 
     public void deleteCriteria(Long criteriaId) {

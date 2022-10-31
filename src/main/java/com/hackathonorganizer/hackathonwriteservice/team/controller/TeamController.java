@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/write/teams")
 @RequiredArgsConstructor
@@ -20,14 +22,14 @@ public class TeamController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TeamResponse create(@RequestBody TeamRequest teamRequest) {
+    public TeamResponse create(@RequestBody @Valid TeamRequest teamRequest) {
 
         log.info("Processing new team create request {}", teamRequest);
         return teamService.create(teamRequest);
     }
 
     @PutMapping("/{id}")
-    public TeamResponse edit(@PathVariable Long id, @RequestBody TeamRequest teamRequest) {
+    public TeamResponse edit(@PathVariable Long id, @RequestBody @Valid TeamRequest teamRequest) {
 
         log.info("Processing new team id: {} edit request {}", id, teamRequest);
         return teamService.editById(id, teamRequest);
@@ -42,7 +44,7 @@ public class TeamController {
     }
 
     @PatchMapping("/{teamId}/invites")
-    public void updateInvitationStatus(@RequestBody TeamInvitationDto teamInvitation) {
+    public void updateInvitationStatus(@RequestBody @Valid TeamInvitationDto teamInvitation) {
 
         log.info("Updating team: {} invitation status", teamInvitation.teamId());
         teamService.updateInvitationStatus(teamInvitation);
