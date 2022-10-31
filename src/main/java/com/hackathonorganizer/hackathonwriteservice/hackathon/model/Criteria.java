@@ -20,10 +20,10 @@ public class Criteria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name can not be empty!")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Hackathon can not be null!")
     @ManyToOne
     @JoinColumn(name = "hackathon_id")
     private Hackathon hackathon;

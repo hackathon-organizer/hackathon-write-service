@@ -26,26 +26,26 @@ public class Hackathon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name can not be empty!")
     private String name;
 
-    @NotEmpty
+    @NotEmpty(message = "Description can not be empty!")
     private String description;
 
-    @NotEmpty
+    @NotEmpty(message = "Organizer info can not be empty!")
     private String organizerInfo;
 
-    @NotNull
+    @NotNull(message = "Owner id can not be null!")
     private Long ownerId;
 
     @Builder.Default
     private boolean isActive = true;
 
-    @NotNull
+    @NotNull(message = "Event start date can not be null!")
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime eventStartDate;
 
-    @NotNull
+    @NotNull(message = "Event end date can not be null!")
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime eventEndDate;
 

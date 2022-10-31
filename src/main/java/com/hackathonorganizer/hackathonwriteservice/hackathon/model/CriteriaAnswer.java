@@ -20,10 +20,10 @@ public class CriteriaAnswer {
 
     private Integer value;
 
-    @NotNull
+    @NotNull(message = "Team can not be null!")
     private Long teamId;
 
-    @NotNull
+    @NotNull(message = "User id can not be null!")
     private Long userId;
 
     @ManyToOne
