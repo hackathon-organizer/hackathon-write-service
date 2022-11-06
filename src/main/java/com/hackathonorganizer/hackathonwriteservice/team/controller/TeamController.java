@@ -43,7 +43,7 @@ public class TeamController {
 
     @PostMapping("/{teamId}/invite/{userId}")
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
-            @PathVariable("userId") Long userId, @RequestParam("username") String username) {
+            @PathVariable("userId") Long userId, @RequestParam("username") String username) throws InterruptedException {
 
         log.info("Processing new team invitation");
         teamService.processInvitation(teamId, userId, username);
