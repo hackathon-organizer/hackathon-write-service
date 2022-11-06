@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeamInvitationRepository extends JpaRepository<TeamInvitation, Long> {
 
-   @Query("SELECT inv FROM ")
     boolean existsByToUserIdAndTeamIdAndInvitationStatus(Long toUserId,
             Long teamId, InvitationStatus invitationStatus);
 }

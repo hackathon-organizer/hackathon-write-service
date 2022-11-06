@@ -70,7 +70,7 @@ public class Team {
     public void removeUserFromTeam(Long userId) {
 
         if (!teamMembersIds.remove(userId)) {
-            log.info("User with id: {} is already added to team", userId);
+            log.info("User with id: {} is not in team", userId);
         }
     }
 

@@ -31,7 +31,7 @@ public class TeamService {
     private final NotificationService notificationService;
     private final RestCommunicator restCommunicator;
 
-    public TeamResponse create(TeamRequest teamRequest) {
+    public TeamResponse createTeam(TeamRequest teamRequest) {
 
         Hackathon hackathon = getHackathonById(teamRequest.hackathonId());
 
@@ -56,7 +56,7 @@ public class TeamService {
         return TeamMapper.mapToTeamDto(savedTeam);
     }
 
-    public TeamResponse editById(Long id, TeamRequest teamRequest) {
+    public TeamResponse editTeamById(Long id, TeamRequest teamRequest) {
 
         Team team = getTeamById(id);
 
@@ -73,13 +73,6 @@ public class TeamService {
     public void processInvitation(Long teamId, Long toUserId, String fromUserUsername) {
 
         Team team = getTeamById(teamId);
-
-        TeamInvitation teamInvitation = TeamInvitation.builder()
-                        .teamName(team.getName())
-                        .invitationStatus(InvitationStatus.PENDING)
-                        .fromUserName(fromUserUsername)
-                        .toUserId(toUserId)
-                        .team(team).build();
 
         if (teamInvitationAlreadyExists(toUserId, team.getId())) {
             log.info("Invitation to team with id: {} already exists", team.getId());
