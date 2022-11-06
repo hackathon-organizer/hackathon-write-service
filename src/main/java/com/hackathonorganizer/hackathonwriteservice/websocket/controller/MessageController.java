@@ -18,7 +18,7 @@ public class MessageController {
 
     @MessageMapping("/private-message")
     @SendToUser("/topic/private-messages")
-    public void inviteUserToTeam(TeamInvitation teamInvitation, @RequestParam("userId") String userId) {
+    public void inviteUserToTeam(TeamInvitation teamInvitation) {
 
         notificationService.sendTeamInviteNotification(teamInvitation);
     }
