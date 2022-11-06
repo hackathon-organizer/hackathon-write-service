@@ -68,31 +68,24 @@ public class TeamService {
         });
     }
 
-    public void processInvitation(Long teamId, Long userId, String fromUserUsername) {
+    public void processInvitation(Long teamId, Long toUserId, String fromUserUsername) {
 
         Team team = teamRepository.findById(teamId)
                         .orElseThrow(() -> new ResourceNotFoundException(
                                 String.format("Team with id: %d not found", teamId)));
 
-        TeamInvitation teamInvitation = TeamInvitation.builder()
-                        .teamName(team.getName())
-                        .invitationStatus(InvitationStatus.PENDING)
-                        .fromUserName(fromUserUsername)
-                        .toUserId(userId)
-                        .team(team)
-                        .build();
+        if (teamInvitationAlreadyExists(toUserId, team.getId())) {
+            log.info("Invitation to team with id: {} already exists", team.getId());
+            return;
+        }
 
-       TeamInvitation savedInvite = this.teamInvitationRepository.save(teamInvitation);
+       TeamInvitation savedTeamInvitation = createTeamInvitation(team, fromUserUsername,
+               toUserId);
 
-       team.addUserInvitationToTeam(savedInvite);
+       Team savedTeam = teamRepository.save(team);
+       log.info("Team with id: {} invitation info updated successfully", savedTeam.getId());
 
-       teamRepository.save(team);
-
-       log.info("Invitation with id: {} saved successfully", savedInvite.getId());
-
-       TeamInvitationDto inviteDto = TeamMapper.mapToTeamInvitationDto(savedInvite);
-
-       notificationService.sendTeamInviteNotification(inviteDto);
+       notificationService.sendTeamInviteNotification(savedTeamInvitation);
     }
 
     public void updateInvitationStatus(TeamInvitationDto teamInvitationDto) {
@@ -118,5 +111,27 @@ public class TeamService {
         teamInvitationRepository.save(teamInvitation);
 
         log.info("Invitation with id: {} status updated", teamInvitation.getId());
+    }
+
+    private boolean teamInvitationAlreadyExists(Long toUserId, Long teamId) {
+
+        return teamInvitationRepository.existsByToUserIdAndTeamId(toUserId, teamId);
+    }
+
+    private TeamInvitation createTeamInvitation(Team team, String fromUserUsername,
+            Long toUserId) {
+
+        TeamInvitation teamInvitation = TeamInvitation.builder()
+                .teamName(team.getName())
+                .invitationStatus(InvitationStatus.PENDING)
+                .fromUserName(fromUserUsername)
+                .toUserId(toUserId)
+                .team(team)
+                .build();
+
+        TeamInvitation savedInvite = teamInvitationRepository.save(teamInvitation);
+        log.info("Invitation with id: {} saved successfully", savedInvite.getId());
+
+        return savedInvite;
     }
 }
