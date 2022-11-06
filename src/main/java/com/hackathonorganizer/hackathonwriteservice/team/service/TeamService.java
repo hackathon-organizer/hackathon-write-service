@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +51,8 @@ public class TeamService {
 
         updateUserTeamMembership(teamRequest.hackathonId(), teamRequest.ownerId(), savedTeam);
 
+        createTeamChatRoom(savedTeam);
+
         return TeamMapper.mapToTeamDto(savedTeam);
     }
 
@@ -69,7 +70,7 @@ public class TeamService {
         return TeamMapper.mapToTeamDto(teamRepository.save(team));
     }
 
-    public void processInvitation(Long teamId, Long userId, String fromUserUsername) {
+    public void processInvitation(Long teamId, Long toUserId, String fromUserUsername) {
 
         Team team = getTeamById(teamId);
 
@@ -77,18 +78,23 @@ public class TeamService {
                         .teamName(team.getName())
                         .invitationStatus(InvitationStatus.PENDING)
                         .fromUserName(fromUserUsername)
-                        .toUserId(userId)
+                        .toUserId(toUserId)
                         .team(team).build();
 
-       TeamInvitation savedInvite = teamInvitationRepository.save(teamInvitation);
-       log.info("Invitation with id: {} saved successfully", savedInvite.getId());
+        if (teamInvitationAlreadyExists(toUserId, team.getId())) {
+            log.info("Invitation to team with id: {} already exists", team.getId());
+            return;
+        }
 
-       team.addUserInvitationToTeam(savedInvite);
+       TeamInvitation savedTeamInvitation = createTeamInvitation(team, fromUserUsername,
+               toUserId);
+
+       team.addUserInvitationToTeam(savedTeamInvitation);
 
        Team savedTeam = teamRepository.save(team);
        log.info("Team with id: {} invitation info updated successfully", savedTeam.getId());
 
-       notificationService.sendTeamInviteNotification(savedInvite);
+       notificationService.sendTeamInviteNotification(savedTeamInvitation);
     }
 
     public void updateInvitationStatus(TeamInvitationDto teamInvitationDto) {
@@ -112,7 +118,6 @@ public class TeamService {
 
         log.info("Invitation with id: {} status updated", teamInvitation.getId());
     }
-
     public void addUserToTeam(Long teamId, Long userId) {
 
         Team team = getTeamById(teamId);
@@ -147,27 +152,26 @@ public class TeamService {
 
     private void updateUserTeamMembership(Long hackathonId, Long userId, Team team) {
 
-        try {
             UserMembershipRequest userHackathonMembershipRequest =
                     new UserMembershipRequest(hackathonId, team.getId());
 
             restCommunicator.updateUserMembership(userId, userHackathonMembershipRequest);
 
-            Long chatId = restCommunicator.createTeamChatRoom(team.getId());
-
-            team.setChatRoomId(chatId);
-
             Team savedTeam = teamRepository.save(team);
 
             log.info("User with id: {} membership in team with id: {} was " +
                             "updated successfully", userId, savedTeam);
-        } catch (HttpServerErrorException.ServiceUnavailable ex) {
-            log.warn("Messaging service is unavailable. Can't update user " +
-                    "team membership. {}", ex.getMessage());
+    }
 
-            throw new TeamException("Messaging service is unavailable. Can't update user " +
-                    "team membership", HttpStatus.SERVICE_UNAVAILABLE);
-        }
+    private void createTeamChatRoom(Team team) {
+        Long chatId = restCommunicator.createTeamChatRoom(team.getId());
+
+        team.setChatRoomId(chatId);
+
+        Team savedTeam = teamRepository.save(team);
+
+        log.info("Successfully created team chatroom to team with id: {} ",
+                savedTeam);
     }
 
     private Hackathon getHackathonById(Long hackathonId) {
@@ -188,9 +192,32 @@ public class TeamService {
 
     private TeamInvitation getTeamInvitationById(Long invitationId) {
 
-       return teamInvitationRepository.findById(invitationId)
+        return teamInvitationRepository.findById(invitationId)
                 .orElseThrow(() -> new TeamException(
                         String.format("Invitation with id: %d not " + "found",
-                        invitationId), HttpStatus.NOT_FOUND));
+                                invitationId), HttpStatus.NOT_FOUND));
+    }
+
+    private boolean teamInvitationAlreadyExists(Long toUserId, Long teamId) {
+
+        return teamInvitationRepository.existsByToUserIdAndTeamIdAndInvitationStatus(toUserId,
+                teamId, InvitationStatus.PENDING);
+    }
+
+    private TeamInvitation createTeamInvitation(Team team, String fromUserUsername,
+            Long toUserId) {
+
+        TeamInvitation teamInvitation = TeamInvitation.builder()
+                .teamName(team.getName())
+                .invitationStatus(InvitationStatus.PENDING)
+                .fromUserName(fromUserUsername)
+                .toUserId(toUserId)
+                .team(team)
+                .build();
+
+        TeamInvitation savedInvite = teamInvitationRepository.save(teamInvitation);
+        log.info("Invitation with id: {} saved successfully", savedInvite.getId());
+
+        return savedInvite;
     }
 }
