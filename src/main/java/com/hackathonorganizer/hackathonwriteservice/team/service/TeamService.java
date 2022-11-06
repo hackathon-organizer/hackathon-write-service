@@ -69,7 +69,7 @@ public class TeamService {
         return TeamMapper.mapToTeamDto(teamRepository.save(team));
     }
 
-    public void processInvitation(Long teamId, Long userId, String fromUserUsername) throws InterruptedException {
+    public void processInvitation(Long teamId, Long userId, String fromUserUsername) {
 
         Team team = getTeamById(teamId);
 
