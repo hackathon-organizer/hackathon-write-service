@@ -8,7 +8,5 @@ import java.util.List;
 
 public interface CriteriaRepository extends JpaRepository<Criteria, Long> {
 
-    List<Criteria> findCriteriaByHackathonId(Long hackathonId);
-
     boolean existsCriteriaByNameAndHackathonId(String name, Long hackathonId);
 }
