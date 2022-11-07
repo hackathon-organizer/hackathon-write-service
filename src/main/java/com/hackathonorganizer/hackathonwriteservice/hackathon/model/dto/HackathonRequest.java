@@ -17,6 +17,8 @@ public record HackathonRequest(
         @NotEmpty
         String organizerInfo,
 
+        Boolean isActive,
+
         @NotNull
         @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
         LocalDateTime eventStartDate,

@@ -77,7 +77,7 @@ public class HackathonServiceTests {
 
         // when
         HackathonResponse hackathonResponse = hackathonService
-                .updateHackathonData(5L, new HackathonRequest("Edited " +
+                .updateHackathon(5L, new HackathonRequest("Edited " +
                         "Hackathon",
                         "Edited Desc", "Org info",
                         LocalDateTime.now(), LocalDateTime.now().plusDays(1), 1L));
@@ -99,7 +99,7 @@ public class HackathonServiceTests {
 
         //when
         Throwable thrown =
-                catchThrowable(() -> hackathonService.updateHackathonData(hackathonId,
+                catchThrowable(() -> hackathonService.updateHackathon(hackathonId,
                         new HackathonRequest("Edited Hackathon",
                                 "Edited Desc", "Org info",
                                 LocalDateTime.now(),

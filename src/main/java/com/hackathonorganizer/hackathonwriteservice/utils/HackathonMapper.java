@@ -1,4 +1,4 @@
-package com.hackathonorganizer.hackathonwriteservice.hackathon.utils;
+package com.hackathonorganizer.hackathonwriteservice.utils;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;

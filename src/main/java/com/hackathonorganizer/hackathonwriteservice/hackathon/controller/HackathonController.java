@@ -1,7 +1,5 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.controller;
 
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.*;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonService;
 import lombok.AllArgsConstructor;
@@ -34,7 +32,7 @@ public class HackathonController {
 
         log.info("Trying to add update hackathon with id {}", hackathonId);
 
-        return hackathonService.updateHackathonData(hackathonId, hackathonRequest);
+        return hackathonService.updateHackathon(hackathonId, hackathonRequest);
     }
 
     @PatchMapping("/{id}/deactivate")
