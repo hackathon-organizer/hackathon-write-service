@@ -28,10 +28,10 @@ public class RestCommunicator {
             log.info("Send user membership status update");
         } catch (HttpServerErrorException.ServiceUnavailable ex) {
             log.warn("User service is unavailable. Can't update user " +
-                    "team membership. {}", ex.getMessage());
+                    " membership. {}", ex.getMessage());
 
-            throw new TeamException("Messaging service is unavailable. Can't update user " +
-                    "team membership", HttpStatus.SERVICE_UNAVAILABLE);
+            throw new TeamException("User service is unavailable. Can't update user " +
+                    " membership", HttpStatus.SERVICE_UNAVAILABLE);
         }
 
     }
