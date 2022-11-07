@@ -49,9 +49,14 @@ public class TeamController {
     }
 
     @PatchMapping("/{id}/participants/{userId}")
-    public void addUserToTeam(@PathVariable("id") Long teamId,
-            @PathVariable("userId") Long userId) {
+    public void addUserToTeam(@PathVariable("id") Long teamId, @PathVariable("userId") Long userId) {
 
         teamService.addUserToTeam(teamId, userId);
+    }
+
+    @DeleteMapping("/{id}/participants/{userId}")
+    public void removeUserFromTeam(@PathVariable("id") Long teamId, @PathVariable("userId") Long userId) {
+
+        teamService.removeUserFromTeam(teamId, userId);
     }
 }

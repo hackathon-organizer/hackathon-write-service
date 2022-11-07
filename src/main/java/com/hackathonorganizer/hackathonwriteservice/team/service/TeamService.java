@@ -120,6 +120,8 @@ public class TeamService {
             team.addUserToTeam(userId);
 
             updateUserTeamMembership(team.getHackathon().getId(), userId, team);
+
+            teamRepository.save(team);
         } else {
 
             log.info("Team with id: " + teamId + " is not accepting new members");
@@ -127,6 +129,17 @@ public class TeamService {
             throw new TeamException(String.format( "Team with id: %d is not accepting new members",
                     team.getId()), HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    public void removeUserFromTeam(Long teamId, Long userId) {
+
+        Team team = getTeamById(teamId);
+
+        team.removeUserFromTeam(userId);
+
+        updateUserTeamMembership(team.getHackathon().getId(), userId, team);
+
+        teamRepository.save(team);
     }
 
     public boolean openOrCloseTeamForMembers(Long id, boolean isOpen) {
