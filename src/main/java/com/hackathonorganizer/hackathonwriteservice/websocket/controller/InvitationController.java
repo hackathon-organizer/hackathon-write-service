@@ -1,6 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.websocket.controller;
 
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,17 +11,14 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class MessageController {
+public class InvitationController {
 
     private final NotificationService notificationService;
 
     @MessageMapping("/private-message")
     @SendToUser("/topic/private-messages")
-    public void inviteUserToTeam(TeamInvitationDto teamInvitation) {
+    public void inviteUserToTeam(TeamInvitation teamInvitation) {
 
         notificationService.sendTeamInviteNotification(teamInvitation);
-
-        log.info("User id: {} send invite to team", NotificationService.userId);
     }
-
 }

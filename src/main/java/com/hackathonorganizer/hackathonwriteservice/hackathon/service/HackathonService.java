@@ -92,7 +92,7 @@ public class HackathonService {
         UserMembershipRequest userMembershipRequest =
                 new UserMembershipRequest(hackathonId, 0L);
 
-        restCommunicator.updateUserHackathonId(userId, userMembershipRequest);
+        restCommunicator.updateUserMembership(userId, userMembershipRequest);
 
         log.info("User with id: {} successfully added to hackathon with id: " +
                 "{}", userId, hackathonId);

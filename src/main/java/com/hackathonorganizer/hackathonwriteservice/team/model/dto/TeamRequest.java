@@ -14,6 +14,8 @@ public record TeamRequest(
         @NotEmpty
         String name,
 
+        Boolean isOpen,
+
         String description,
 
         @NotNull
