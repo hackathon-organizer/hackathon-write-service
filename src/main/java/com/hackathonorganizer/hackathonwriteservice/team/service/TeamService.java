@@ -124,8 +124,8 @@ public class TeamService {
 
             log.info("Team with id: " + teamId + " is not accepting new members");
 
-            throw new TeamException("Team with id: " + teamId + " is not " +
-                    "accepting new members", HttpStatus.NOT_ACCEPTABLE);
+            throw new TeamException(String.format( "Team with id: %d is not accepting new members",
+                    team.getId()), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
