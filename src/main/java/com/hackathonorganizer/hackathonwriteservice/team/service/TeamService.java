@@ -169,10 +169,7 @@ public class TeamService {
 
     private Hackathon getHackathonById(Long hackathonId) {
 
-        return hackathonService.findById(hackathonId).orElseThrow(() ->
-            new TeamException(
-                    String.format("Hackathon with id: %d not found", hackathonId),
-                    HttpStatus.NOT_FOUND));
+        return hackathonService.getHackathonById(hackathonId);
     }
 
     private Team getTeamById(Long teamId) {

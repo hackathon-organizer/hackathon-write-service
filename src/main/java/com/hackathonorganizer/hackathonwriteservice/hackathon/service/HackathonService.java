@@ -186,7 +186,7 @@ public class HackathonService {
         restCommunicator.updateUserMembership(userId, userMembershipRequest);
     }
 
-    private Hackathon getHackathonById(Long hackathonId) {
+    public Hackathon getHackathonById(Long hackathonId) {
 
         return hackathonRepository.findById(hackathonId)
                 .orElseThrow(() -> new HackathonException(String.format(
