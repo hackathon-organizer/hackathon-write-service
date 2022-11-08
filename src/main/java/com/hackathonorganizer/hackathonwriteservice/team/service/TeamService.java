@@ -141,10 +141,9 @@ public class TeamService {
 
         teamRepository.save(team);
     }
+    public boolean openOrCloseTeamForMembers(Long teamId, boolean isOpen) {
 
-    public boolean openOrCloseTeamForMembers(Long id, boolean isOpen) {
-
-        Team team = getTeamById(id);
+        Team team = getTeamById(teamId);
 
         team.setIsOpen(isOpen);
 
