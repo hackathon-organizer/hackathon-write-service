@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +30,13 @@ public class HackathonService {
     private final CriteriaRepository criteriaRepository;
 
     public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
+
+        if (areEventDatesNotValid(hackathonRequest)) {
+            log.info("Hackathon request provides incorrect event dates");
+
+            throw new HackathonException("Hackathon request provides incorrect event dates",
+                    HttpStatus.BAD_REQUEST);
+        }
 
         Hackathon hackathon = Hackathon.builder()
                 .name(hackathonRequest.name())
@@ -49,6 +56,13 @@ public class HackathonService {
     }
 
     public HackathonResponse updateHackathon(Long hackathonId, HackathonRequest hackathonUpdatedData) {
+
+        if (areEventDatesNotValid(hackathonUpdatedData)) {
+            log.info("Hackathon request provides incorrect event dates");
+
+            throw new HackathonException("Hackathon request provides incorrect event dates",
+                    HttpStatus.BAD_REQUEST);
+        }
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
@@ -184,6 +198,13 @@ public class HackathonService {
                 new UserMembershipRequest(hackathonId, 0L);
 
         restCommunicator.updateUserMembership(userId, userMembershipRequest);
+    }
+
+    private boolean areEventDatesNotValid(HackathonRequest hackathonRequest) {
+
+        return hackathonRequest.eventStartDate().isAfter(hackathonRequest.eventEndDate()) ||
+                LocalDateTime.now().isAfter(hackathonRequest.eventStartDate()) ||
+                LocalDateTime.now().isAfter(hackathonRequest.eventEndDate());
     }
 
     public Hackathon getHackathonById(Long hackathonId) {
