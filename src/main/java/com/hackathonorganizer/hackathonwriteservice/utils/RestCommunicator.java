@@ -2,6 +2,7 @@ package com.hackathonorganizer.hackathonwriteservice.utils;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.TeamException;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
+import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,8 @@ public class RestCommunicator {
         log.info("Trying update team membership to user with id: " + userId);
 
         try {
-            restTemplate.put("http://localhost:9090/api/v1/write/users/"
-                    + userId + "/membership", userMembershipRequest);
+            restTemplate.patchForObject("http://localhost:9090/api/v1/write/users/"
+                    + userId + "/membership", userMembershipRequest, Void.class);
 
             log.info("Send user membership status update");
         } catch (HttpServerErrorException.ServiceUnavailable ex) {
@@ -31,7 +32,9 @@ public class RestCommunicator {
                     " membership. {}", ex.getMessage());
 
             throw new TeamException("User service is unavailable. Can't update user " +
-                    " membership", HttpStatus.SERVICE_UNAVAILABLE);
+                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
 
     }
@@ -51,6 +54,27 @@ public class RestCommunicator {
 
             throw new TeamException("Messaging service is unavailable. Can't create " +
                     "team chatroom.", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    public UserMembershipResponse getUserMembershipDetails(Long userId) {
+
+        log.info("Trying to fetch user with id: {} membership", userId);
+
+        try {
+            UserMembershipResponse userMembershipResponse =
+                    restTemplate.getForObject("http://localhost:9090/api/v1/read/users/"
+                    + userId + "/membership", UserMembershipResponse.class);
+
+            log.info("Send user membership status update");
+
+            return userMembershipResponse;
+        } catch (HttpServerErrorException.ServiceUnavailable ex) {
+            log.warn("User service is unavailable. Can't get user " +
+                    " membership. {}", ex.getMessage());
+
+            throw new TeamException("User service is unavailable. Can't get user " +
+                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 

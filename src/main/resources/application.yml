@@ -1,4 +1,9 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/auth/realms/hackathon-organizer/protocol/openid-connect/certs
   config:
     import: optional:configserver:http://localhost:8888/
   cloud:

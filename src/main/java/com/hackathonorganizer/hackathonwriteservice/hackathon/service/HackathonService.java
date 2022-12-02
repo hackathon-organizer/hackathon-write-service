@@ -46,8 +46,11 @@ public class HackathonService {
                 .eventStartDate(hackathonRequest.eventStartDate())
                 .eventEndDate(hackathonRequest.eventEndDate())
                 .build();
+        hackathon.addUserToHackathonParticipants(hackathonRequest.ownerId());
 
         Hackathon savedHackathon = hackathonRepository.save(hackathon);
+
+        updateUserHackathonMembership(savedHackathon.getId(), savedHackathon.getOwnerId());
 
         log.info("Hackathon with id: {} saved successfully",
                 savedHackathon.getId());
@@ -213,5 +216,12 @@ public class HackathonService {
                 .orElseThrow(() -> new HackathonException(String.format(
                         "Hackathon with id: %d not found", hackathonId),
                         HttpStatus.NOT_FOUND));
+    }
+
+    public boolean isUserHackathonParticipant(Long hackathonId, Long userId) {
+
+        Hackathon hackathon = getHackathonById(hackathonId);
+
+        return hackathon.getHackathonParticipantsIds().contains(userId);
     }
 }

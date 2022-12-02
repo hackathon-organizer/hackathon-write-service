@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -18,12 +19,16 @@ public class HackathonController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
+    @RolesAllowed({"USER"})
     public HackathonResponse createHackathon(@RequestBody @Valid HackathonRequest hackathon) {
+
+        //TODO add user ORGANIZER role
 
         return hackathonService.createHackathon(hackathon);
     }
 
     @PutMapping("/{id}")
+    @RolesAllowed({"ORGANIZER"})
     public HackathonResponse updateHackathonInfo(@PathVariable("id") Long hackathonId,
             @RequestBody @Valid HackathonRequest hackathonRequest) {
 
@@ -31,6 +36,7 @@ public class HackathonController {
     }
 
     @PatchMapping("/{id}/deactivate")
+    @RolesAllowed({"ORGANIZER"})
     public void deactivateHackathon(@PathVariable("id") Long hackathonId) {
 
         hackathonService.deactivateHackathon(hackathonId);
@@ -44,6 +50,7 @@ public class HackathonController {
     }
 
     @PatchMapping("/{id}/participants/{userId}/remove")
+    @RolesAllowed({"ORGANIZER"})
     public void removeUserFromHackathon(@PathVariable("id") Long hackathonId,
             @PathVariable("userId") Long userId) {
 
@@ -52,6 +59,7 @@ public class HackathonController {
 
     @PostMapping("/{id}/criteria")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @RolesAllowed({"ORGANIZER"})
     public void addRateCriteriaToHackathon(@PathVariable("id") Long hackathonId,
             @RequestBody List<CriteriaDto> criteriaRequest) {
 
@@ -59,6 +67,7 @@ public class HackathonController {
     }
 
     @PutMapping("/{id}/criteria")
+    @RolesAllowed({"MENTOR","JURY","ORGANIZER"})
     public void updateRateCriteriaToHackathon(@PathVariable("id") Long hackathonId,
             @RequestBody List<CriteriaDto> criteriaRequest) {
 
@@ -66,14 +75,16 @@ public class HackathonController {
     }
 
     @PatchMapping("/{id}/criteria/answers")
-    public void saveTeamRatingAnswer(@PathVariable("id") Long hackathonId,
+    @RolesAllowed({"MENTOR","JURY","ORGANIZER"})
+    public void saveTeamRatingAnswers(@PathVariable("id") Long hackathonId,
             @RequestBody List<CriteriaAnswerRequest> criteria) {
 
         hackathonService.saveCriteriaAnswers(criteria);
     }
 
     @DeleteMapping("/criteria/{id}")
-    public void saveTeamRatingAnswer(@PathVariable("id") Long criteriaId) {
+    @RolesAllowed({"ORGANIZER"})
+    public void deleteCriteria(@PathVariable("id") Long criteriaId) {
 
         hackathonService.deleteCriteria(criteriaId);
     }
