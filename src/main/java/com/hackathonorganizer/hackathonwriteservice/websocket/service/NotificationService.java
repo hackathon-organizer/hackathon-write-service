@@ -21,10 +21,9 @@ public class NotificationService {
 
         TeamInvitationDto inviteDto = TeamMapper.mapToTeamInvitationDto(teamInvitation);
 
-        log.info("Sending invite with id: {} to user with id {}", inviteDto.id(),
-                teamInvitation.getToUserId());
+        log.info("Sending invite with id: {} to user with id {}", inviteDto.id(), teamInvitation.getToUserId());
 
         messagingTemplate.convertAndSendToUser(String.valueOf(teamInvitation.getToUserId()),
-                "/topic/private-notifications", inviteDto);
+                "/topic/invitations", inviteDto);
     }
 }

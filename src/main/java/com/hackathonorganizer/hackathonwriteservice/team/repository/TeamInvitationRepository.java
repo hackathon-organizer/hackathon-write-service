@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeamInvitationRepository extends JpaRepository<TeamInvitation, Long> {
 
-    boolean existsByToUserIdAndTeamIdAndInvitationStatus(Long toUserId,
-            Long teamId, InvitationStatus invitationStatus);
+    boolean existsByToUserIdAndTeamIdAndInvitationStatus(Long toUserKeycloakId, Long teamId, InvitationStatus invitationStatus);
 }

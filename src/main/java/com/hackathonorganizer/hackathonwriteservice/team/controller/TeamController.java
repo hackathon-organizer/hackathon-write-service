@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/write/teams")
@@ -22,23 +23,23 @@ public class TeamController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({"USER"})
-    public TeamResponse createTeam(@RequestBody TeamRequest teamRequest) {
+    public TeamResponse createTeam(@RequestBody TeamRequest teamRequest, Principal principal) {
         //TODO add user TEAM_OWNER role
 
-        return teamService.createTeam(teamRequest);
+        return teamService.createTeam(teamRequest, principal);
     }
 
     @PutMapping("/{id}")
     @RolesAllowed({"TEAM_OWNER","ORGANIZER"})
-    public TeamResponse editTeam(@PathVariable Long id, @RequestBody TeamRequest teamRequest) {
+    public TeamResponse editTeam(@PathVariable Long id, @RequestBody TeamRequest teamRequest, Principal principal) {
 
-        return teamService.editTeamById(id, teamRequest);
+        return teamService.editTeamById(id, teamRequest, principal);
     }
 
     @PatchMapping("/{id}")
     @RolesAllowed({"TEAM_OWNER","ORGANIZER"})
     public boolean openOrCloseTeamForMembers(@PathVariable Long id,
-            @RequestBody TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
+                                             @RequestBody TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
 
         return teamService.openOrCloseTeamForMembers(id, teamVisibilityStatusRequest);
     }
@@ -46,12 +47,13 @@ public class TeamController {
     @PostMapping("/{teamId}/invite/{userId}")
     @RolesAllowed({"USER"})
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
-            @PathVariable("userId") Long userId, @RequestParam("username") String username) {
+            @PathVariable("userId") Long userId, @RequestParam("username") String username, Principal principal) {
 
-        teamService.processInvitation(teamId, userId, username);
+        teamService.processInvitation(teamId, userId, username, principal);
     }
 
     @PatchMapping("/{teamId}/invites")
+    @RolesAllowed("USER")
     public void updateInvitationStatus(@RequestBody TeamInvitationDto teamInvitation) {
 
         teamService.updateInvitationStatus(teamInvitation);

@@ -3,6 +3,7 @@ package com.hackathonorganizer.hackathonwriteservice.utils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.TeamException;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipResponse;
+import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,26 +19,25 @@ public class RestCommunicator {
 
     private final RestTemplate restTemplate;
 
-    public void updateUserMembership(Long userId, UserMembershipRequest userMembershipRequest) {
-
-        log.info("Trying update team membership to user with id: " + userId);
-
-        try {
-            restTemplate.patchForObject("http://localhost:9090/api/v1/write/users/"
-                    + userId + "/membership", userMembershipRequest, Void.class);
-
-            log.info("Send user membership status update");
-        } catch (HttpServerErrorException.ServiceUnavailable ex) {
-            log.warn("User service is unavailable. Can't update user " +
-                    " membership. {}", ex.getMessage());
-
-            throw new TeamException("User service is unavailable. Can't update user " +
-                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-
-    }
+//    public void updateUserMembership(Long userId, UserMembershipRequest userMembershipRequest) {
+//
+//        log.info("Trying update team membership to user with id: " + userId);
+//
+//        try {
+//            restTemplate.patchForObject("http://localhost:9090/api/v1/read/write/"
+//                    + userId + "/membership", userMembershipRequest, Void.class);
+//
+//            log.info("Send user membership status update");
+//        } catch (HttpServerErrorException.ServiceUnavailable ex) {
+//            log.warn("User service is unavailable. Can't update user " +
+//                    " membership. {}", ex.getMessage());
+//
+//            throw new TeamException("User service is unavailable. Can't update user " +
+//                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
+//        } catch (Exception e) {
+//            log.info(e.getMessage());
+//        }
+//    }
 
     public Long createTeamChatRoom(Long teamId) {
 
@@ -57,25 +57,20 @@ public class RestCommunicator {
         }
     }
 
-    public UserMembershipResponse getUserMembershipDetails(Long userId) {
-
-        log.info("Trying to fetch user with id: {} membership", userId);
+    public UserResponseDto getUserByKeycloakId(String keycloakId) {
+        log.info("Trying to get details of user with id: {}", keycloakId);
 
         try {
-            UserMembershipResponse userMembershipResponse =
-                    restTemplate.getForObject("http://localhost:9090/api/v1/read/users/"
-                    + userId + "/membership", UserMembershipResponse.class);
+            ResponseEntity<UserResponseDto> userDetails =  restTemplate.getForEntity(
+                    "http://localhost:9090/api/v1/read/users/keycloak/" + keycloakId, UserResponseDto.class);
 
-            log.info("Send user membership status update");
-
-            return userMembershipResponse;
+            return userDetails.getBody();
         } catch (HttpServerErrorException.ServiceUnavailable ex) {
-            log.warn("User service is unavailable. Can't get user " +
-                    " membership. {}", ex.getMessage());
+            log.warn("User service is unavailable. Can't get " +
+                    "user details. {}", ex.getMessage());
 
-            throw new TeamException("User service is unavailable. Can't get user " +
-                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
+            throw new TeamException("User service is unavailable. Can't get " +
+                    "user details.", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-
 }

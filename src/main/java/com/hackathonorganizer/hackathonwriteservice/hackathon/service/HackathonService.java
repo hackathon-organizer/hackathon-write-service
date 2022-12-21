@@ -11,12 +11,14 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.Criteri
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
 import com.hackathonorganizer.hackathonwriteservice.utils.HackathonMapper;
 import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
-import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
+import com.hackathonorganizer.hackathonwriteservice.utils.UserPermissionValidator;
+import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,13 +31,14 @@ public class HackathonService {
     private final RestCommunicator restCommunicator;
     private final CriteriaRepository criteriaRepository;
 
+    private final UserPermissionValidator userPermissionValidator;
+
     public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
 
         if (areEventDatesNotValid(hackathonRequest)) {
             log.info("Hackathon request provides incorrect event dates");
 
-            throw new HackathonException("Hackathon request provides incorrect event dates",
-                    HttpStatus.BAD_REQUEST);
+            throw new HackathonException("Hackathon request provides incorrect event dates", HttpStatus.BAD_REQUEST);
         }
 
         Hackathon hackathon = Hackathon.builder()
@@ -50,52 +53,57 @@ public class HackathonService {
 
         Hackathon savedHackathon = hackathonRepository.save(hackathon);
 
-        updateUserHackathonMembership(savedHackathon.getId(), savedHackathon.getOwnerId());
-
-        log.info("Hackathon with id: {} saved successfully",
-                savedHackathon.getId());
+        log.info("Hackathon with id: {} saved successfully", savedHackathon.getId());
 
         return HackathonMapper.mapToDto(savedHackathon);
     }
 
-    public HackathonResponse updateHackathon(Long hackathonId, HackathonRequest hackathonUpdatedData) {
+    public HackathonResponse updateHackathon(Long hackathonId, HackathonRequest hackathonUpdatedData, Principal principal) {
 
-        if (areEventDatesNotValid(hackathonUpdatedData)) {
-            log.info("Hackathon request provides incorrect event dates");
+        if (userPermissionValidator.verifyUser(principal, hackathonUpdatedData.ownerId())) {
 
-            throw new HackathonException("Hackathon request provides incorrect event dates",
-                    HttpStatus.BAD_REQUEST);
+            if (areEventDatesNotValid(hackathonUpdatedData)) {
+                log.info("Hackathon request provides incorrect event dates");
+
+                throw new HackathonException("Hackathon request provides incorrect event dates", HttpStatus.BAD_REQUEST);
+            }
+
+            Hackathon hackathon = getHackathonById(hackathonId);
+
+            Hackathon updatedHackathon = hackathon.toBuilder()
+                    .name(hackathonUpdatedData.name())
+                    .description(hackathonUpdatedData.description())
+                    .organizerInfo(hackathonUpdatedData.organizerInfo())
+                    .ownerId(hackathonUpdatedData.ownerId())
+                    .isActive(hackathonUpdatedData.isActive())
+                    .eventStartDate(hackathonUpdatedData.eventStartDate())
+                    .eventEndDate(hackathonUpdatedData.eventEndDate())
+                    .build();
+
+            Hackathon savedHackathon = hackathonRepository.save(updatedHackathon);
+
+            log.info("Hackathon with id: {} updated successfully", savedHackathon.getId());
+
+            return HackathonMapper.mapToDto(savedHackathon);
+        } else {
+            throw new HackathonException("User is not hackathon owner", HttpStatus.FORBIDDEN);
         }
-
-        Hackathon hackathon = getHackathonById(hackathonId);
-
-        Hackathon updatedHackathon = hackathon.toBuilder()
-                .name(hackathonUpdatedData.name())
-                .description(hackathonUpdatedData.description())
-                .organizerInfo(hackathonUpdatedData.organizerInfo())
-                .ownerId(hackathonUpdatedData.ownerId())
-                .isActive(hackathonUpdatedData.isActive())
-                .eventStartDate(hackathonUpdatedData.eventStartDate())
-                .eventEndDate(hackathonUpdatedData.eventEndDate())
-                .build();
-
-
-        Hackathon savedHackathon = hackathonRepository.save(updatedHackathon);
-
-        log.info("Hackathon with id: {} updated successfully", savedHackathon.getId());
-
-        return HackathonMapper.mapToDto(savedHackathon);
     }
 
-    public void deactivateHackathon(Long hackathonId) {
+    public void deactivateHackathon(Long hackathonId, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
-        hackathon.setActive(false);
+        if (userPermissionValidator.verifyUser(principal, hackathon.getOwnerId())) {
 
-        hackathonRepository.save(hackathon);
+            hackathon.setActive(false);
 
-        log.info("Hackathon with id: {} deactivated successfully", hackathonId);
+            hackathonRepository.save(hackathon);
+
+            log.info("Hackathon with id: {} deactivated successfully", hackathonId);
+        } else {
+            throw new HackathonException("User is not hackathon owner", HttpStatus.FORBIDDEN);
+        }
     }
 
     public void assignUserToHackathon(Long hackathonId, Long userId) {
@@ -104,55 +112,63 @@ public class HackathonService {
 
         hackathon.addUserToHackathonParticipants(userId);
 
-        updateUserHackathonMembership(hackathonId, userId);
-
         hackathonRepository.save(hackathon);
     }
 
-    public void removeUserFromHackathonParticipants(Long hackathonId, Long userId) {
+    public void removeUserFromHackathonParticipants(Long hackathonId, Long userId, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
+
+        if (userPermissionValidator.verifyUser(principal, hackathon.getOwnerId())) {
 
         hackathon.removeUserFromHackathonParticipants(userId);
 
-        updateUserHackathonMembership(0L, userId);
-
         hackathonRepository.save(hackathon);
+        } else {
+            throw new HackathonException("User is not hackathon owner", HttpStatus.FORBIDDEN);
+        }
     }
 
-    public void addRateCriteriaToHackathon(Long hackathonId, List<CriteriaDto> criteria) {
+    public void addRateCriteriaToHackathon(Long hackathonId, List<CriteriaDto> criteria, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
-        criteria.forEach(criterion -> {
+        if (userPermissionValidator.verifyUser(principal, hackathon.getOwnerId())) {
 
-            Criteria c = Criteria.builder()
-                    .name(criterion.name())
-                    .build();
+            criteria.forEach(criterion -> {
 
-            c.setHackathon(hackathon);
+                Criteria c = Criteria.builder()
+                        .name(criterion.name())
+                        .build();
 
-            criteriaRepository.save(c);
-        });
+                c.setHackathon(hackathon);
 
-        log.info("Criteria for hackathon {} saved successfully", hackathonId);
+                criteriaRepository.save(c);
+            });
+
+            log.info("Criteria for hackathon {} saved successfully", hackathonId);
+        }
     }
 
-    public void updateRateCriteriaToHackathon(Long hackathonId, List<CriteriaDto> criteria) {
+    public void updateRateCriteriaInHackathon(Long hackathonId, List<CriteriaDto> criteria, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
+        UserResponseDto userResponseDto = restCommunicator.getUserByKeycloakId(principal.getName());
+
+        if (isUserHackathonParticipant(hackathon.getId(), userResponseDto.currentHackathonId())) {
 
         criteria.forEach(criterion -> {
 
             Criteria c;
 
-            if (criteriaRepository.existsCriteriaByNameAndHackathonId(criterion.name(),
-                    criterion.hackathonId())) {
+            if (criteriaRepository.existsCriteriaByNameAndHackathonId(criterion.name(), criterion.hackathonId())) {
                return;
             } else {
 
                 if (criterion.id() != null) {
-                    c = criteriaRepository.findById(criterion.id()).orElseThrow();
+                    c = criteriaRepository.findById(criterion.id()).orElseThrow(() -> new HackathonException(
+                            String.format("Criteria with id: %d not found", criterion.id()),
+                            HttpStatus.NOT_FOUND));
 
                     c.setName(criterion.name().trim());
                     c.setHackathon(hackathon);
@@ -168,39 +184,54 @@ public class HackathonService {
         });
 
         log.info("Criteria for hackathon {} updated successfully", hackathonId);
+        } else {
+            log.info("User with id: {} is not hackathon participant", userResponseDto.id());
+
+            throw new HackathonException("User with id " + userResponseDto.id() + " is not hackathon participant",
+                    HttpStatus.FORBIDDEN);
+        }
     }
 
-    public void saveCriteriaAnswers(List<CriteriaAnswerRequest> criteriaAnswers) {
+    public void saveCriteriaAnswers(Long hackathonId, List<CriteriaAnswerRequest> criteriaAnswers, Principal principal) {
 
-        criteriaAnswers.forEach(criteriaRequest -> {
+        Hackathon hackathon = getHackathonById(hackathonId);
+        UserResponseDto userResponseDto = restCommunicator.getUserByKeycloakId(principal.getName());
 
-            Criteria criteria = criteriaRepository.findById(criteriaRequest.id()).
-                    orElseThrow(() -> new HackathonException(
-                            String.format("Criteria with id: %d not found", criteriaRequest.id()),
-                            HttpStatus.NOT_FOUND));
+        if (isUserHackathonParticipant(hackathon.getId(), userResponseDto.currentHackathonId())) {
 
-            criteriaRequest.criteriaAnswer().setCriteria(criteria);
-            criteria.addAnswer(criteriaRequest.criteriaAnswer());
+            criteriaAnswers.forEach(criteriaRequest -> {
 
-            criteriaRepository.save(criteria);
-        });
+                Criteria criteria = criteriaRepository.findById(criteriaRequest.id()).
+                        orElseThrow(() -> new HackathonException(
+                                String.format("Criteria with id: %d not found", criteriaRequest.id()),
+                                HttpStatus.NOT_FOUND));
 
-        log.info("Criteria answers saved successfully");
+                criteriaRequest.criteriaAnswer().setCriteria(criteria);
+                criteriaRequest.criteriaAnswer().setUserId(userResponseDto.id());
+                criteria.addAnswer(criteriaRequest.criteriaAnswer());
+
+                criteriaRepository.save(criteria);
+            });
+
+            log.info("Criteria answers saved successfully");
+        } else {
+            log.info("User with id: {} is not hackathon participant", userResponseDto.id());
+
+            throw new HackathonException("User with id " + userResponseDto.id() + " is not hackathon participant",
+                    HttpStatus.FORBIDDEN);
+        }
     }
 
-    public void deleteCriteria(Long criteriaId) {
+    public void deleteCriteria(Long hackathonId, Long criteriaId, Principal principal) {
 
-        criteriaRepository.deleteById(criteriaId);
+        Hackathon hackathon = getHackathonById(hackathonId);
 
-        log.info("Criteria was deleted successfully");
-    }
+        if (userPermissionValidator.verifyUser(principal, hackathon.getOwnerId())) {
 
-    private void updateUserHackathonMembership(Long hackathonId, Long userId) {
+            criteriaRepository.deleteById(criteriaId);
 
-        UserMembershipRequest userMembershipRequest =
-                new UserMembershipRequest(hackathonId, 0L);
-
-        restCommunicator.updateUserMembership(userId, userMembershipRequest);
+            log.info("Criteria was deleted successfully");
+        }
     }
 
     private boolean areEventDatesNotValid(HackathonRequest hackathonRequest) {
@@ -218,10 +249,7 @@ public class HackathonService {
                         HttpStatus.NOT_FOUND));
     }
 
-    public boolean isUserHackathonParticipant(Long hackathonId, Long userId) {
-
-        Hackathon hackathon = getHackathonById(hackathonId);
-
-        return hackathon.getHackathonParticipantsIds().contains(userId);
+    public boolean isUserHackathonParticipant(Long hackathonId, Long userHackathonId) {
+        return userHackathonId.equals(hackathonId);
     }
 }
