@@ -24,7 +24,6 @@ public class TeamController {
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({"USER"})
     public TeamResponse createTeam(@RequestBody TeamRequest teamRequest, Principal principal) {
-        //TODO add user TEAM_OWNER role
 
         return teamService.createTeam(teamRequest, principal);
     }
@@ -47,16 +46,16 @@ public class TeamController {
     @PostMapping("/{teamId}/invite/{userId}")
     @RolesAllowed({"USER"})
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
-            @PathVariable("userId") Long userId, @RequestParam("username") String username, Principal principal) {
+            @PathVariable("userId") Long userId, @RequestParam("username") String username) {
 
-        teamService.processInvitation(teamId, userId, username, principal);
+        teamService.processInvitation(teamId, userId, username);
     }
 
     @PatchMapping("/{teamId}/invites")
     @RolesAllowed("USER")
-    public void updateInvitationStatus(@RequestBody TeamInvitationDto teamInvitation) {
+    public void updateInvitationStatus(@RequestBody TeamInvitationDto teamInvitation, Principal principal) {
 
-        teamService.updateInvitationStatus(teamInvitation);
+        teamService.updateInvitationStatus(teamInvitation, principal);
     }
 
     @PatchMapping("/{id}/participants/{userId}")

@@ -1,7 +1,9 @@
 package com.hackathonorganizer.hackathonwriteservice.utils;
 
+import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -16,6 +18,10 @@ public class UserPermissionValidator {
 
         UserResponseDto userResponseDto = restCommunicator.getUserByKeycloakId(principal.getName());
 
-        return userResponseDto.id().equals(userId);
+        if (userResponseDto.id().equals(userId)) {
+            return true;
+        } else {
+            throw new HackathonException("User verification failed", HttpStatus.FORBIDDEN);
+        }
     }
 }

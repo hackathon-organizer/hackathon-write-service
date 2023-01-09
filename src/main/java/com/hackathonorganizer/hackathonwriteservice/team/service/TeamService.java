@@ -3,6 +3,8 @@ package com.hackathonorganizer.hackathonwriteservice.team.service;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.TeamException;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonService;
+import com.hackathonorganizer.hackathonwriteservice.keycloak.KeycloakService;
+import com.hackathonorganizer.hackathonwriteservice.keycloak.Role;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
@@ -15,13 +17,10 @@ import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
 import com.hackathonorganizer.hackathonwriteservice.utils.UserPermissionValidator;
-import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
-import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipResponse;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
 import com.hackathonorganizer.hackathonwriteservice.websocket.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.admin.client.Keycloak;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +36,7 @@ public class TeamService {
     private final HackathonService hackathonService;
     private final NotificationService notificationService;
     private final RestCommunicator restCommunicator;
+    private final KeycloakService keycloakService;
 
     private final UserPermissionValidator userPermissionValidator;
 
@@ -55,16 +55,13 @@ public class TeamService {
                     .tags(teamRequest.tags())
                     .build();
 
+            keycloakService.updateUserRole(principal.getName(), Role.TEAM_OWNER);
+
             log.info("Trying to save new team {}", teamToSave.getId());
-
             Team savedTeam = teamRepository.save(teamToSave);
-
             log.info("Team with id: " + savedTeam.getId() + " saved successfully");
 
-            // updateUserTeamMembership(teamRequest.hackathonId(), teamRequest.ownerId(), savedTeam);
-
             createTeamChatRoom(savedTeam);
-
             return TeamMapper.mapToTeamDto(savedTeam);
         } else {
 
@@ -100,7 +97,7 @@ public class TeamService {
         }
     }
 
-    public void processInvitation(Long teamId, Long toUserId, String fromUserUsername, Principal principal) {
+    public void processInvitation(Long teamId, Long toUserId, String fromUserUsername) {
 
         Team team = getTeamById(teamId);
 
@@ -109,8 +106,7 @@ public class TeamService {
             return;
         }
 
-       TeamInvitation savedTeamInvitation = createTeamInvitation(team, fromUserUsername,
-               toUserId);
+       TeamInvitation savedTeamInvitation = createTeamInvitation(team, fromUserUsername, toUserId);
 
        team.addUserInvitationToTeam(savedTeamInvitation);
 
@@ -120,7 +116,7 @@ public class TeamService {
        notificationService.sendTeamInviteNotification(savedTeamInvitation);
     }
 
-    public void updateInvitationStatus(TeamInvitationDto teamInvitationDto) {
+    public void updateInvitationStatus(TeamInvitationDto teamInvitationDto, Principal principal) {
 
         Team team = getTeamById(teamInvitationDto.teamId());
 
@@ -128,6 +124,7 @@ public class TeamService {
 
         if (teamInvitationDto.invitationStatus() == InvitationStatus.ACCEPTED) {
             teamInvitation.setInvitationStatus(InvitationStatus.ACCEPTED);
+            keycloakService.removeRoles(principal.getName());
             team.addUserToTeam(teamInvitationDto.toUserId());
         } else {
             teamInvitation.setInvitationStatus(InvitationStatus.REJECTED);
@@ -153,8 +150,7 @@ public class TeamService {
         }
     }
 
-    public boolean openOrCloseTeamForMembers(Long teamId,
-            TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
+    public boolean openOrCloseTeamForMembers(Long teamId, TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
 
         if (checkIfUserIsTeamOwner(teamVisibilityStatusRequest.userId(), teamId)) {
 
@@ -164,8 +160,7 @@ public class TeamService {
 
             Team savedTeam = teamRepository.save(team);
 
-            log.info("Team with id: {} is now {}", savedTeam.getId(),
-                    savedTeam.getIsOpen() ? "open" : "closed");
+            log.info("Team with id: {} is now {}", savedTeam.getId(), savedTeam.getIsOpen() ? "open" : "closed");
 
             return savedTeam.getIsOpen();
         } else {
@@ -210,8 +205,7 @@ public class TeamService {
         return teamInvitationRepository.existsByToUserIdAndTeamIdAndInvitationStatus(toUserId, teamId, InvitationStatus.PENDING);
     }
 
-    private TeamInvitation createTeamInvitation(Team team, String fromUserUsername,
-            Long toUserId) {
+    private TeamInvitation createTeamInvitation(Team team, String fromUserUsername, Long toUserId) {
 
         TeamInvitation teamInvitation = TeamInvitation.builder()
                 .teamName(team.getName())

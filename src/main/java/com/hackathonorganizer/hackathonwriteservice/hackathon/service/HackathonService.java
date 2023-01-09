@@ -9,6 +9,8 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.Hackatho
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.HackathonRepository;
+import com.hackathonorganizer.hackathonwriteservice.keycloak.KeycloakService;
+import com.hackathonorganizer.hackathonwriteservice.keycloak.Role;
 import com.hackathonorganizer.hackathonwriteservice.utils.HackathonMapper;
 import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
 import com.hackathonorganizer.hackathonwriteservice.utils.UserPermissionValidator;
@@ -30,10 +32,11 @@ public class HackathonService {
     private final HackathonRepository hackathonRepository;
     private final RestCommunicator restCommunicator;
     private final CriteriaRepository criteriaRepository;
+    private final KeycloakService keycloakService;
 
     private final UserPermissionValidator userPermissionValidator;
 
-    public HackathonResponse createHackathon(HackathonRequest hackathonRequest) {
+    public HackathonResponse createHackathon(HackathonRequest hackathonRequest, Principal principal) {
 
         if (areEventDatesNotValid(hackathonRequest)) {
             log.info("Hackathon request provides incorrect event dates");
@@ -50,6 +53,8 @@ public class HackathonService {
                 .eventEndDate(hackathonRequest.eventEndDate())
                 .build();
         hackathon.addUserToHackathonParticipants(hackathonRequest.ownerId());
+
+        keycloakService.updateUserRole(principal.getName(), Role.ORGANIZER);
 
         Hackathon savedHackathon = hackathonRepository.save(hackathon);
 
@@ -106,9 +111,11 @@ public class HackathonService {
         }
     }
 
-    public void assignUserToHackathon(Long hackathonId, Long userId) {
+    public void assignUserToHackathon(Long hackathonId, Long userId, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
+
+        keycloakService.removeRoles(principal.getName());
 
         hackathon.addUserToHackathonParticipants(userId);
 

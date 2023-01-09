@@ -59,7 +59,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         LocalDateTime eventEndDate = LocalDateTime.now().plusDays(1);
 
         HackathonRequest request = new HackathonRequest(name, desc,
-                organizerInfo, eventStartDate, eventEndDate, 1L);
+                organizerInfo, true, eventStartDate, eventEndDate, 1L);
 
         Hackathon savedHackathon = hackathonCreator.createHackathon();
 
@@ -160,7 +160,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         LocalDateTime eventEndDate = LocalDateTime.of(2022, 12, 13, 13, 0);
 
         return new HackathonRequest(name, desc,
-                organizerInfo, eventStartDate, eventEndDate, 1L);
+                organizerInfo, true, eventStartDate, eventEndDate, 1L);
     }
 
 }

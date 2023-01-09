@@ -23,9 +23,12 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 keycloak:
-  auth-server-url: http://localhost:8080/auth
+  authUrl: http://localhost:8080/auth
   realm: hackathon-organizer
-  resource: hackathon-write-service
+  masterRealm: master
+  clientId: admin-cli
+  username: ${keycloak.login}
+  password: ${keycloak.password}
 server:
   port: 0
 

@@ -20,11 +20,9 @@ public class HackathonController {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     @RolesAllowed({"USER"})
-    public HackathonResponse createHackathon(@RequestBody @Valid HackathonRequest hackathon) {
+    public HackathonResponse createHackathon(@RequestBody @Valid HackathonRequest hackathon, Principal principal) {
 
-        //TODO add user ORGANIZER role
-
-        return hackathonService.createHackathon(hackathon);
+        return hackathonService.createHackathon(hackathon, principal);
     }
 
     @PutMapping("/{hackathonId}")
@@ -44,9 +42,10 @@ public class HackathonController {
 
     @PatchMapping("/{hackathonId}/participants/{userId}")
     @RolesAllowed("USER")
-    public void signUpUserToHackathon(@PathVariable("hackathonId") Long hackathonId, @PathVariable("userId") Long userId) {
+    public void signUpUserToHackathon(@PathVariable("hackathonId") Long hackathonId, @PathVariable("userId") Long userId,
+                                      Principal principal) {
 
-        hackathonService.assignUserToHackathon(hackathonId, userId);
+        hackathonService.assignUserToHackathon(hackathonId, userId, principal);
     }
 
     @PatchMapping("/{hackathonId}/participants/{userId}/remove")
