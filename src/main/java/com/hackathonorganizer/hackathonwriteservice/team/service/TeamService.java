@@ -136,17 +136,18 @@ public class TeamService {
 
         log.info("Invitation with id: {} status updated", teamInvitation.getId());
     }
-    public void addUserToTeam(Long teamId, Long userId) {
+    public void addUserToTeam(Long teamId, Long userId, Principal principal) {
 
         Team team = getTeamById(teamId);
 
         if (team.getIsOpen()) {
+            keycloakService.removeRoles(principal.getName());
             team.addUserToTeam(userId);
         } else {
             log.info("Team with id: " + teamId + " is not accepting new members");
 
-            throw new TeamException(String.format( "Team with id: %d is not accepting new members",
-                    team.getId()), HttpStatus.NOT_ACCEPTABLE);
+            throw new TeamException(String.format( "Team %s is not accepting new members",
+                    team.getName()), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

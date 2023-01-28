@@ -59,10 +59,10 @@ public class HackathonController {
     @PostMapping("/{hackathonId}/criteria")
     @ResponseStatus(code = HttpStatus.CREATED)
     @RolesAllowed({"ORGANIZER"})
-    public void addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaDto> criteriaRequest,
+    public List<CriteriaDto> addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaDto> criteriaRequest,
                                            Principal principal) {
 
-        hackathonService.addRateCriteriaToHackathon(hackathonId, criteriaRequest, principal);
+        return hackathonService.addRateCriteriaToHackathon(hackathonId, criteriaRequest, principal);
     }
 
     @PutMapping("/{hackathonId}/criteria")
@@ -75,10 +75,10 @@ public class HackathonController {
 
     @PatchMapping("/{hackathonId}/criteria/answers")
     @RolesAllowed({"JURY","ORGANIZER"})
-    public void saveTeamRatingAnswers(@PathVariable("id") Long hackathonId, @RequestBody List<CriteriaAnswerRequest> criteria,
+    public List<CriteriaAnswerDto> saveTeamRatingAnswers(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaAnswerDto> criteria,
                                       Principal principal) {
 
-        hackathonService.saveCriteriaAnswers(hackathonId, criteria, principal);
+        return hackathonService.saveCriteriaAnswers(hackathonId, criteria, principal);
     }
 
     @DeleteMapping("/{hackathonId}/criteria/{criteriaId}")

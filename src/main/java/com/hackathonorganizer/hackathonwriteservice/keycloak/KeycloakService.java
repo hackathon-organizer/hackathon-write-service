@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,18 +33,23 @@ public class KeycloakService {
     public void updateUserRole(String keycloakId, Role newRole) {
 
         try {
-            Keycloak keycloak = buildKeyCloak();
-            String realm = "hackathon-organizer";
+            String realmName = "hackathon-organizer";
 
-            UsersResource usersResource = keycloak.realm(realm).users();
+            RealmResource realmResource = buildKeyCloak().realm(realmName);
+
+            RolesResource realmRoles = realmResource.roles();
+            RoleRepresentation userNewRole = realmRoles.list().stream().filter(role -> role.getName().equals(newRole.name())).findFirst()
+                    .orElseThrow(() -> new HackathonException("Role " + newRole + " not found", HttpStatus.NOT_FOUND));
+
+            UsersResource usersResource = realmResource.users();
             UserResource userResource = usersResource.get(keycloakId);
+            RoleMappingResource roleMappingResource = userResource.roles();
 
-            List<RoleRepresentation> roles = userResource.roles().realmLevel().listEffective();
-            RoleRepresentation foundedRole = userResource.roles().realmLevel().listAvailable()
-                    .stream().filter(role -> role.getName().equals(newRole.name())).toList().get(0);
+            RoleScopeResource roleScopeResource = roleMappingResource.realmLevel();
+            List<RoleRepresentation> rolesRepresentation = roleScopeResource.listAll();
 
-            roles.add(foundedRole);
-            userResource.roles().realmLevel().add(roles);
+            rolesRepresentation.add(userNewRole);
+            userResource.roles().realmLevel().add(rolesRepresentation);
 
             log.info("Role {} added to user: {}", newRole, keycloakId);
         } catch (Exception ex) {

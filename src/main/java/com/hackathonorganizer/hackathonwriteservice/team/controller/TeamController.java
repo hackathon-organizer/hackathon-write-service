@@ -60,8 +60,8 @@ public class TeamController {
 
     @PatchMapping("/{id}/participants/{userId}")
     @RolesAllowed({"USER"})
-    public void addUserToTeam(@PathVariable("id") Long teamId, @PathVariable("userId") Long userId) {
+    public void addUserToTeam(@PathVariable("id") Long teamId, @PathVariable("userId") Long userId, Principal principal) {
 
-        teamService.addUserToTeam(teamId, userId);
+        teamService.addUserToTeam(teamId, userId, principal);
     }
 }

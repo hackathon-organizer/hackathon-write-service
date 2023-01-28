@@ -1,8 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,7 +9,9 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CriteriaAnswer {
 
     @Id
@@ -33,19 +33,18 @@ public class CriteriaAnswer {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof CriteriaAnswer answer)) return false;
 
-        CriteriaAnswer that = (CriteriaAnswer) o;
-
-        if (!Objects.equals(teamId, that.teamId))
-            return false;
-        return Objects.equals(userId, that.userId);
+        if (!Objects.equals(id, answer.id)) return false;
+        if (!userId.equals(answer.userId)) return false;
+        return criteria.equals(answer.criteria);
     }
 
     @Override
     public int hashCode() {
-        int result = teamId != null ? teamId.hashCode() : 0;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + criteria.hashCode();
         return result;
     }
 }
