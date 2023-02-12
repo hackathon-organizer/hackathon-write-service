@@ -10,22 +10,22 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_hackathon_id"/>
             </column>
-            <column name="name" type="varchar" >
+            <column name="name" type="varchar">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="varchar" >
+            <column name="description" type="varchar">
                 <constraints nullable="false"/>
             </column>
-            <column name="organizer_info" type="varchar" >
+            <column name="organizer_info" type="varchar">
                 <constraints nullable="false"/>
             </column>
 
             <column name="is_active" type="boolean" defaultValue="true"/>
 
-            <column name="event_start_date" type="datetime" >
+            <column name="event_start_date" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column name="event_end_date" type="datetime" >
+            <column name="event_end_date" type="datetime">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -49,7 +49,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_tag_id"/>
             </column>
-            <column name="name" type="varchar" />
+            <column name="name" type="varchar"/>
         </createTable>
 
         <createTable tableName="team_tags">
@@ -78,17 +78,21 @@
         </createTable>
 
         <addForeignKeyConstraint constraintName="fk_hackathon_team_id" referencedTableName="hackathon"
-                                    baseColumnNames="hackathon_id"
-                                    baseTableName="team" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+                                 baseColumnNames="hackathon_id"
+                                 baseTableName="team" referencedColumnNames="id" onUpdate="RESTRICT"
+                                 onDelete="RESTRICT"/>
 
         <addForeignKeyConstraint constraintName="fk_team_team_members_id" referencedTableName="team"
                                  baseColumnNames="team_id"
-                                 baseTableName="team_members" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+                                 baseTableName="team_members" referencedColumnNames="id" onUpdate="RESTRICT"
+                                 onDelete="RESTRICT"/>
 
-        <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="tag_id" constraintName="fk_team_tags_tag_id" referencedTableName="tag"
+        <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="tag_id" constraintName="fk_team_tags_tag_id"
+                                 referencedTableName="tag"
                                  referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
 
-        <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="team_id" constraintName="fk_team_tags_team_id" referencedTableName="team"
+        <addForeignKeyConstraint baseTableName="team_tags" baseColumnNames="team_id"
+                                 constraintName="fk_team_tags_team_id" referencedTableName="team"
                                  referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
 
@@ -101,7 +105,8 @@
 
         <addForeignKeyConstraint constraintName="fk_hackathon_hackathon_participants_id" referencedTableName="hackathon"
                                  baseColumnNames="hackathon_id"
-                                 baseTableName="hackathon_participants" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+                                 baseTableName="hackathon_participants" referencedColumnNames="id" onUpdate="RESTRICT"
+                                 onDelete="RESTRICT"/>
     </changeSet>
 
     <changeSet id="add-team-invites" author="Yankes">
@@ -127,7 +132,8 @@
 
         <addForeignKeyConstraint constraintName="fk_team_team_invitations" referencedTableName="team"
                                  baseColumnNames="team_id"
-                                 baseTableName="team_invitations" referencedColumnNames="id" onUpdate="RESTRICT" onDelete="RESTRICT"/>
+                                 baseTableName="team_invitations" referencedColumnNames="id" onUpdate="RESTRICT"
+                                 onDelete="RESTRICT"/>
     </changeSet>
 
 
@@ -215,31 +221,79 @@
 
     <changeSet id="insert-basic-tags" author="Yankes">
         <insert tableName="tag">
-            <column name="name"  value="Java"/>
-            <column name="name"  value="CSS"/>
-            <column name="name"  value="HTML"/>
-            <column name="name"  value="JavaScript"/>
-            <column name="name"  value="C"/>
-            <column name="name"  value="C++"/>
-            <column name="name"  value="C#"/>
-            <column name="name"  value="Python"/>
-            <column name="name"  value="Go"/>
-            <column name="name"  value="Ruby"/>
-            <column name="name"  value="Swift"/>
-            <column name="name"  value="PHP"/>
-            <column name="name"  value="Angular"/>
-            <column name="name"  value="React"/>
-            <column name="name"  value="Vue"/>
-            <column name="name"  value="Laravel"/>
-            <column name="name"  value="Spring Boot"/>
-            <column name="name"  value="Django"/>
-            <column name="name"  value="Flask"/>
-            <column name="name"  value="Docker"/>
-            <column name="name"  value="Kubernetes"/>
-            <column name="name"  value="SQL"/>
-            <column name="name"  value="noSQL"/>
-            <column name="name"  value="TypeScript"/>
-            <column name="name"  value="Rust"/>
+            <column name="name" value="Java"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="CSS"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="HTML"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="JavaScript"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="C"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="C++"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="C#"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Python"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Go"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Ruby"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Swift"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="PHP"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Angular"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="React"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Vue"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Laravel"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Spring Boot"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Django"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Flask"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Docker"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Kubernetes"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="SQL"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="noSQL"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="TypeScript"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="name" value="Rust"/>
         </insert>
     </changeSet>
 
