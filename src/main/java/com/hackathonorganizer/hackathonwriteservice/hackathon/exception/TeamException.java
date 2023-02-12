@@ -4,12 +4,9 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class TeamException extends RuntimeException {
-
-    private final HttpStatus httpStatus;
+public class TeamException extends BaseException {
 
     public TeamException(String message, HttpStatus httpStatus) {
-        super(message);
-        this.httpStatus = httpStatus;
+        super(message, httpStatus);
     }
 }

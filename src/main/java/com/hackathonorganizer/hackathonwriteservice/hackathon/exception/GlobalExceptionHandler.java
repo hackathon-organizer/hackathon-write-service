@@ -11,16 +11,8 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(HackathonException.class)
-    public ResponseEntity<ErrorResponse> handleHackathonException(HackathonException ex) {
-
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), List.of(ex.getMessage()));
-
-        return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
-    }
-
-    @ExceptionHandler(TeamException.class)
-    public ResponseEntity<ErrorResponse> handleTeamException(TeamException ex) {
+    @ExceptionHandler({HackathonException.class, TeamException.class})
+    public ResponseEntity<ErrorResponse> handleHackathonException(BaseException ex) {
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), List.of(ex.getMessage()));
 

@@ -18,6 +18,7 @@ import java.util.List;
 public class KeycloakService {
 
     private final KeycloakProperties keycloakProperties;
+    private final String REALM_NAME = "hackathon-organizer";
 
     public Keycloak buildKeyCloak() {
 
@@ -33,9 +34,7 @@ public class KeycloakService {
     public void updateUserRole(String keycloakId, Role newRole) {
 
         try {
-            String realmName = "hackathon-organizer";
-
-            RealmResource realmResource = buildKeyCloak().realm(realmName);
+            RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
 
             RolesResource realmRoles = realmResource.roles();
             RoleRepresentation userNewRole = realmRoles.list().stream().filter(role -> role.getName().equals(newRole.name())).findFirst()
@@ -61,19 +60,17 @@ public class KeycloakService {
 
     public void removeRoles(String keycloakId) {
         try {
-            Keycloak keycloak = buildKeyCloak();
-            String realm = "hackathon-organizer";
+            RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
 
-            UsersResource usersResource = keycloak.realm(realm).users();
+            UsersResource usersResource =  realmResource.users();
             UserResource userResource = usersResource.get(keycloakId);
 
-            List<RoleRepresentation> defaultRoles = userResource.roles().realmLevel().listAll().stream()
+            RolesResource realmRoles = realmResource.roles();
+            List<RoleRepresentation> defaultRoles = realmRoles.list().stream()
                     .filter(role -> role.getName().equals("default-roles-hackathon-organizer") ||
                             role.getName().equals("USER")).toList();
 
-            List<RoleRepresentation> roles = userResource.roles().realmLevel().listAll();
-            userResource.roles().realmLevel().remove(roles);
-
+            userResource.roles().realmLevel().remove(realmRoles.list());
             userResource.roles().realmLevel().add(defaultRoles);
 
             log.info("Roles cleared from user: {}", keycloakId);

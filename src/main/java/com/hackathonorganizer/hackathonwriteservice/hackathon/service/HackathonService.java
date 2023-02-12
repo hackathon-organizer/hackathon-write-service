@@ -116,11 +116,20 @@ public class HackathonService {
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
-        keycloakService.removeRoles(principal.getName());
+        if (LocalDateTime.now().isBefore(hackathon.getEventStartDate())) {
 
-        hackathon.addUserToHackathonParticipants(userId);
+            hackathon.addUserToHackathonParticipants(userId);
+            keycloakService.removeRoles(principal.getName());
 
-        hackathonRepository.save(hackathon);
+            hackathonRepository.save(hackathon);
+
+            log.info("User {} membership updated", userId);
+        } else {
+            log.info("Hackathon {} sign up already ended", hackathon.getId());
+
+            throw new HackathonException("Hackathon " + hackathon.getName() + " sign up already ended",
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 
     public void removeUserFromHackathonParticipants(Long hackathonId, Long userId, Principal principal) {

@@ -28,4 +28,5 @@ keycloak:
   password: ${keycloak.password}
 server:
   port: 0
-
+ws:
+  origins: ${WS.ORIGINS}

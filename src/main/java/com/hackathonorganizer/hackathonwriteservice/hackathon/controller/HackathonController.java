@@ -33,13 +33,6 @@ public class HackathonController {
         return hackathonService.updateHackathon(hackathonId, hackathonRequest, principal);
     }
 
-    @PatchMapping("/{hackathonId}/deactivate")
-    @RolesAllowed({"ORGANIZER"})
-    public void deactivateHackathon(@PathVariable("hackathonId") Long hackathonId, Principal principal) {
-
-        hackathonService.deactivateHackathon(hackathonId, principal);
-    }
-
     @PatchMapping("/{hackathonId}/participants/{userId}")
     @RolesAllowed("USER")
     public void signUpUserToHackathon(@PathVariable("hackathonId") Long hackathonId, @PathVariable("userId") Long userId,
@@ -59,15 +52,17 @@ public class HackathonController {
     @PostMapping("/{hackathonId}/criteria")
     @ResponseStatus(code = HttpStatus.CREATED)
     @RolesAllowed({"ORGANIZER"})
-    public List<CriteriaDto> addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaDto> criteriaRequest,
-                                           Principal principal) {
+    public List<CriteriaDto> addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId,
+                                                        @RequestBody List<CriteriaDto> criteriaRequest,
+                                                        Principal principal) {
 
         return hackathonService.addRateCriteriaToHackathon(hackathonId, criteriaRequest, principal);
     }
 
     @PutMapping("/{hackathonId}/criteria")
     @RolesAllowed({"JURY","ORGANIZER"})
-    public void updateRateCriteriaInHackathon(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaDto> criteriaRequest,
+    public void updateRateCriteriaInHackathon(@PathVariable("hackathonId") Long hackathonId,
+                                              @RequestBody List<CriteriaDto> criteriaRequest,
                                               Principal principal) {
 
         hackathonService.updateRateCriteriaInHackathon(hackathonId, criteriaRequest, principal);

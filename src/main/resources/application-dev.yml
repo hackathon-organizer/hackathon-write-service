@@ -17,3 +17,5 @@ spring:
     name: hackathon-write-service
 server:
   port: 0
+ws:
+  origins: '*'

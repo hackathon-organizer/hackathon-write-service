@@ -68,9 +68,8 @@ public class TeamService {
             log.warn("Can't create team because user with id: {} is not " +
                     "hackathon participant", teamRequest.ownerId());
 
-            throw new TeamException("Can't create team because user with id: " +
-                    teamRequest.ownerId() + " is not hackathon participant",
-                    HttpStatus.NOT_FOUND);
+            throw new TeamException("Can't create team because user with id: " + teamRequest.ownerId() +
+                    " is not hackathon participant", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,11 +87,9 @@ public class TeamService {
             return TeamMapper.mapToTeamDto(teamRepository.save(team));
         } else {
 
-            log.warn("Can't edit team because user with id: {} is not " +
-                    "team owner", teamRequest.ownerId());
+            log.warn("Can't edit team because user with id: {} is not team owner", teamRequest.ownerId());
 
-            throw new TeamException("Can't edit team because user with id " +
-                    teamRequest.ownerId() + " is not team owner",
+            throw new TeamException("Can't edit team because user with id " + teamRequest.ownerId() + " is not team owner",
                     HttpStatus.NOT_FOUND);
         }
     }
