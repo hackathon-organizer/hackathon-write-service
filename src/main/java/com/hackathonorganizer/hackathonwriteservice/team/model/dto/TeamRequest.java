@@ -8,16 +8,18 @@ import java.util.List;
 
 public record TeamRequest(
 
+        @NotNull
         Long ownerId,
 
-        @NotEmpty
+        @NotEmpty(message = "Name can not be empty!")
         String name,
 
         Boolean isOpen,
 
+        @NotEmpty(message = "Description can not be empty!")
         String description,
 
-        @NotNull
+        @NotNull(message = "Hackathon can not be null!")
         Long hackathonId,
 
         List<Tag> tags

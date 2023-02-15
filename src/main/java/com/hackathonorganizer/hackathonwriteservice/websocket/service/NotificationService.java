@@ -4,7 +4,6 @@ import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
 import com.hackathonorganizer.hackathonwriteservice.utils.TeamMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

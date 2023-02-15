@@ -26,13 +26,13 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name can not be empty!")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Owner id can not be null!")
     private Long ownerId;
 
-    @NotEmpty
+    @NotEmpty(message = "Description can not be empty!")
     private String description;
 
 
@@ -44,13 +44,13 @@ public class Team {
     private Long chatRoomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+    @NotNull(message = "Hackathon can not be null!")
     private Hackathon hackathon;
 
     @ElementCollection
-    @CollectionTable(name = "team_members", joinColumns = @JoinColumn(name =
-            "team_id"))
+    @CollectionTable(name = "team_members", joinColumns = @JoinColumn(name = "team_id"))
     @Column(name = "team_member_id")
+    @Builder.Default
     private Set<Long> teamMembersIds = new HashSet<>();
 
     @ManyToMany
@@ -59,6 +59,7 @@ public class Team {
     private List<Tag> tags;
 
     @OneToMany(mappedBy = "team")
+    @Builder.Default
     private Set<TeamInvitation> invitations = new HashSet<>();
 
     public void addUserToTeam(Long userId) {

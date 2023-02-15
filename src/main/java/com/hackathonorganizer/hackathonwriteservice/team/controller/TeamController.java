@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -21,14 +22,14 @@ public class TeamController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed("USER")
-    public TeamResponse createTeam(@RequestBody TeamRequest teamRequest, Principal principal) {
+    public TeamResponse createTeam(@RequestBody @Valid TeamRequest teamRequest, Principal principal) {
 
         return teamService.createTeam(teamRequest, principal);
     }
 
     @PutMapping("/{id}")
     @RolesAllowed({"TEAM_OWNER", "ORGANIZER"})
-    public TeamResponse editTeam(@PathVariable Long id, @RequestBody TeamRequest teamRequest, Principal principal) {
+    public TeamResponse editTeam(@PathVariable Long id, @Valid @RequestBody TeamRequest teamRequest, Principal principal) {
 
         return teamService.editTeamById(id, teamRequest, principal);
     }
@@ -52,7 +53,7 @@ public class TeamController {
 
     @PatchMapping("/{teamId}/invites")
     @RolesAllowed("USER")
-    public void updateInvitationStatus(@RequestBody TeamInvitationDto teamInvitation, Principal principal) {
+    public void updateInvitationStatus(@RequestBody @Valid TeamInvitationDto teamInvitation, Principal principal) {
 
         teamService.updateInvitationStatus(teamInvitation, principal);
     }
