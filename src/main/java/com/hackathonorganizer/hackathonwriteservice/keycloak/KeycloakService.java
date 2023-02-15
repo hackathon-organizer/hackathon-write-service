@@ -1,6 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.keycloak;
 
-import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
+import com.hackathonorganizer.hackathonwriteservice.exception.HackathonException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
@@ -51,9 +51,9 @@ public class KeycloakService {
             userResource.roles().realmLevel().add(rolesRepresentation);
 
             log.info("Role {} added to user: {}", newRole, keycloakId);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             log.info("Can't update user roles");
-            ex.printStackTrace();
+
             throw new HackathonException("Can't update user roles", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -62,7 +62,7 @@ public class KeycloakService {
         try {
             RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
 
-            UsersResource usersResource =  realmResource.users();
+            UsersResource usersResource = realmResource.users();
             UserResource userResource = usersResource.get(keycloakId);
 
             RolesResource realmRoles = realmResource.roles();
@@ -74,10 +74,36 @@ public class KeycloakService {
             userResource.roles().realmLevel().add(defaultRoles);
 
             log.info("Roles cleared from user: {}", keycloakId);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             log.info("Can't remove user roles");
-            ex.printStackTrace();
+
             throw new HackathonException("Can't remove user roles", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void removeRole(String keycloakId, Role roleToRemove) {
+        try {
+            RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
+
+            UsersResource usersResource = realmResource.users();
+            UserResource userResource = usersResource.get(keycloakId);
+
+            RolesResource realmRoles = realmResource.roles();
+
+            RoleRepresentation roleToRemoveRepresentation = realmRoles.get(roleToRemove.name()).toRepresentation();
+            List<RoleRepresentation> defaultRoles = realmRoles.list().stream()
+                    .filter(role -> role.getName().equals("default-roles-hackathon-organizer") ||
+                            role.getName().equals("USER")).toList();
+
+            userResource.roles().realmLevel().remove(List.of(roleToRemoveRepresentation));
+            userResource.roles().realmLevel().add(defaultRoles);
+
+            log.info("Roles cleared from user: {}", keycloakId);
+        } catch (RuntimeException ex) {
+            log.info("Can't remove role {}", roleToRemove);
+
+            throw new HackathonException(String.format("Can't remove role %s", roleToRemove.name()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

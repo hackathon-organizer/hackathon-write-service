@@ -1,8 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.utils;
 
-import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.TeamException;
-import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipRequest;
-import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserMembershipResponse;
+import com.hackathonorganizer.hackathonwriteservice.exception.TeamException;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,58 +17,18 @@ public class RestCommunicator {
 
     private final RestTemplate restTemplate;
 
-//    public void updateUserMembership(Long userId, UserMembershipRequest userMembershipRequest) {
-//
-//        log.info("Trying update team membership to user with id: " + userId);
-//
-//        try {
-//            restTemplate.patchForObject("http://localhost:9090/api/v1/read/write/"
-//                    + userId + "/membership", userMembershipRequest, Void.class);
-//
-//            log.info("Send user membership status update");
-//        } catch (HttpServerErrorException.ServiceUnavailable ex) {
-//            log.warn("User service is unavailable. Can't update user " +
-//                    " membership. {}", ex.getMessage());
-//
-//            throw new TeamException("User service is unavailable. Can't update user " +
-//                    "membership", HttpStatus.SERVICE_UNAVAILABLE);
-//        } catch (Exception e) {
-//            log.info(e.getMessage());
-//        }
-//    }
-
-    public Long createTeamChatRoom(Long teamId) {
-
-        log.info("Trying to create new chat room for team with id: " + teamId);
-
-        try {
-            ResponseEntity<Long> chatRoomId =  restTemplate.postForEntity(
-                    "http://localhost:9090/api/v1/messages", teamId, Long.class);
-
-            return chatRoomId.getBody();
-        } catch (HttpServerErrorException.ServiceUnavailable ex) {
-            log.warn("Messaging service is unavailable. Can't create " +
-                    "team chatroom. {}", ex.getMessage());
-
-            throw new TeamException("Messaging service is unavailable. Can't create " +
-                    "team chatroom.", HttpStatus.SERVICE_UNAVAILABLE);
-        }
-    }
-
     public UserResponseDto getUserByKeycloakId(String keycloakId) {
         log.info("Trying to get details of user with id: {}", keycloakId);
 
         try {
-            ResponseEntity<UserResponseDto> userDetails =  restTemplate.getForEntity(
+            ResponseEntity<UserResponseDto> userDetails = restTemplate.getForEntity(
                     "http://localhost:9090/api/v1/read/users/keycloak/" + keycloakId, UserResponseDto.class);
 
             return userDetails.getBody();
         } catch (HttpServerErrorException.ServiceUnavailable ex) {
-            log.warn("User service is unavailable. Can't get " +
-                    "user details. {}", ex.getMessage());
+            log.warn("User service is unavailable. Can't get user details. {}", ex.getMessage());
 
-            throw new TeamException("User service is unavailable. Can't get " +
-                    "user details.", HttpStatus.SERVICE_UNAVAILABLE);
+            throw new TeamException("User service is unavailable. Can't get user details.", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 }

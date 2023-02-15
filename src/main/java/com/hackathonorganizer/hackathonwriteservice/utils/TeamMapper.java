@@ -1,16 +1,16 @@
 package com.hackathonorganizer.hackathonwriteservice.utils;
 
-import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
+import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class TeamMapper {
 
-    public static TeamResponse mapToTeamDto(Team team) {
+    public static TeamResponse mapToDto(Team team) {
         return new TeamResponse(
                 team.getId(),
                 team.getOwnerId(),

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.hackathon-organizer</groupId>
 	<artifactId>hackathon-write-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>hackathon-write-service</name>
 	<description>Hackathon write service</description>
 	<properties>

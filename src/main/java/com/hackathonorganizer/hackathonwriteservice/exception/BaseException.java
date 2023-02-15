@@ -1,10 +1,10 @@
-package com.hackathonorganizer.hackathonwriteservice.hackathon.exception;
+package com.hackathonorganizer.hackathonwriteservice.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class BaseException extends RuntimeException{
+public class BaseException extends RuntimeException {
 
     private final HttpStatus httpStatus;
 

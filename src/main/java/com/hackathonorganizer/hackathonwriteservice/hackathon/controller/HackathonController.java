@@ -1,8 +1,11 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.controller;
 
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.*;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/write/hackathons")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HackathonController {
     private final HackathonService hackathonService;
 
@@ -28,7 +31,7 @@ public class HackathonController {
     @PutMapping("/{hackathonId}")
     @RolesAllowed({"ORGANIZER"})
     public HackathonResponse updateHackathonInfo(@PathVariable("hackathonId") Long hackathonId,
-            @RequestBody @Valid HackathonRequest hackathonRequest, Principal principal) {
+                                                 @RequestBody @Valid HackathonRequest hackathonRequest, Principal principal) {
 
         return hackathonService.updateHackathon(hackathonId, hackathonRequest, principal);
     }
@@ -60,7 +63,7 @@ public class HackathonController {
     }
 
     @PutMapping("/{hackathonId}/criteria")
-    @RolesAllowed({"JURY","ORGANIZER"})
+    @RolesAllowed({"JURY", "ORGANIZER"})
     public void updateRateCriteriaInHackathon(@PathVariable("hackathonId") Long hackathonId,
                                               @RequestBody List<CriteriaDto> criteriaRequest,
                                               Principal principal) {
@@ -69,16 +72,18 @@ public class HackathonController {
     }
 
     @PatchMapping("/{hackathonId}/criteria/answers")
-    @RolesAllowed({"JURY","ORGANIZER"})
-    public List<CriteriaAnswerDto> saveTeamRatingAnswers(@PathVariable("hackathonId") Long hackathonId, @RequestBody List<CriteriaAnswerDto> criteria,
-                                      Principal principal) {
+    @RolesAllowed({"JURY", "ORGANIZER"})
+    public List<CriteriaAnswerDto> saveTeamRatingAnswers(@PathVariable("hackathonId") Long hackathonId,
+                                                         @RequestBody List<CriteriaAnswerDto> criteria,
+                                                         Principal principal) {
 
         return hackathonService.saveCriteriaAnswers(hackathonId, criteria, principal);
     }
 
     @DeleteMapping("/{hackathonId}/criteria/{criteriaId}")
     @RolesAllowed({"ORGANIZER"})
-    public void deleteCriteria(@PathVariable("hackathonId") Long hackathonId, @PathVariable("criteriaId") Long criteriaId,
+    public void deleteCriteria(@PathVariable("hackathonId") Long hackathonId,
+                               @PathVariable("criteriaId") Long criteriaId,
                                Principal principal) {
 
         hackathonService.deleteCriteria(hackathonId, criteriaId, principal);

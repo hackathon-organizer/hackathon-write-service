@@ -1,14 +1,14 @@
 package com.hackathonorganizer.hackathonwriteservice.utils;
 
-import com.hackathonorganizer.hackathonwriteservice.hackathon.exception.HackathonException;
+import com.hackathonorganizer.hackathonwriteservice.exception.HackathonException;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class UserPermissionValidator {
 
