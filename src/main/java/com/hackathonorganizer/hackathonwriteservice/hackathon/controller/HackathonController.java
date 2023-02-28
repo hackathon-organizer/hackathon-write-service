@@ -30,7 +30,7 @@ public class HackathonController {
 
     @PutMapping("/{hackathonId}")
     @RolesAllowed({"ORGANIZER"})
-    public HackathonResponse updateHackathonInfo(@PathVariable("hackathonId") Long hackathonId,
+    public HackathonResponse updateHackathon(@PathVariable("hackathonId") Long hackathonId,
                                                  @RequestBody @Valid HackathonRequest hackathonRequest, Principal principal) {
 
         return hackathonService.updateHackathon(hackathonId, hackathonRequest, principal);

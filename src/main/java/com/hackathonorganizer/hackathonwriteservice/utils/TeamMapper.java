@@ -13,6 +13,8 @@ public class TeamMapper {
     public static TeamResponse mapToDto(Team team) {
         return new TeamResponse(
                 team.getId(),
+                team.getName(),
+                team.getDescription(),
                 team.getOwnerId(),
                 team.getHackathon().getId(),
                 team.getTeamMembersIds(),

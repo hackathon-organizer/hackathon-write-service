@@ -54,8 +54,8 @@ public class TeamService {
                     .tags(teamRequest.tags())
                     .build();
 
-            Team savedTeam = teamRepository.save(teamToSave);
             keycloakService.updateUserRole(principal.getName(), Role.TEAM_OWNER);
+            Team savedTeam = teamRepository.save(teamToSave);
 
             log.info("Team with id: " + savedTeam.getId() + " saved successfully");
 
@@ -63,19 +63,19 @@ public class TeamService {
             return TeamMapper.mapToDto(savedTeam);
         } else {
 
-            log.info("Can't create team because user with id: {} is not " + "hackathon participant", teamRequest.ownerId());
+            log.info("Can't create team because user with id: {} is not hackathon participant", teamRequest.ownerId());
 
             throw new TeamException("Can't create team because user with id: " + teamRequest.ownerId() +
                     " is not hackathon participant", HttpStatus.NOT_FOUND);
         }
     }
 
-    public TeamResponse editTeamById(Long id, TeamRequest teamRequest, Principal principal) {
+    public TeamResponse updateTeamById(Long teamId, TeamRequest teamRequest, Principal principal) {
 
-        if (checkIfUserIsTeamOwner(teamRequest.ownerId(), id) &&
+        Team team = getTeamById(teamId);
+
+        if (checkIfUserIsTeamOwner(teamRequest.ownerId(), team) &&
                 userPermissionValidator.verifyUser(principal, teamRequest.ownerId())) {
-
-            Team team = getTeamById(id);
 
             team.setName(teamRequest.name());
             team.setDescription(teamRequest.description());
@@ -125,10 +125,10 @@ public class TeamService {
             teamInvitation.setInvitationStatus(InvitationStatus.ACCEPTED);
             keycloakService.removeRole(principal.getName(), Role.TEAM_OWNER);
             team.addUserToTeam(teamInvitationDto.toUserId());
-        } else {
-            teamInvitation.setInvitationStatus(InvitationStatus.REJECTED);
 
             teamRepository.save(team);
+        } else {
+            teamInvitation.setInvitationStatus(InvitationStatus.REJECTED);
         }
 
         TeamInvitation savedInvitation = teamInvitationRepository.save(teamInvitation);
@@ -143,6 +143,8 @@ public class TeamService {
         if (team.getIsOpen()) {
             keycloakService.removeRole(principal.getName(), Role.TEAM_OWNER);
             team.addUserToTeam(userId);
+
+            teamRepository.save(team);
         } else {
             log.info("Team with id: {} is not accepting new members", teamId);
 
@@ -153,9 +155,9 @@ public class TeamService {
 
     public boolean openOrCloseTeamForMembers(Long teamId, TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
 
-        if (checkIfUserIsTeamOwner(teamVisibilityStatusRequest.userId(), teamId)) {
+        Team team = getTeamById(teamId);
 
-            Team team = getTeamById(teamId);
+        if (checkIfUserIsTeamOwner(teamVisibilityStatusRequest.userId(), team)) {
 
             team.setIsOpen(teamVisibilityStatusRequest.isOpen());
 
@@ -169,7 +171,7 @@ public class TeamService {
             log.info("Can't edit team because user with id: {} is not team owner", teamVisibilityStatusRequest.userId());
 
             throw new TeamException(String.format("Can't edit team because user with id %d is not team owner",
-                    teamVisibilityStatusRequest.userId()), HttpStatus.NOT_FOUND);
+                    teamVisibilityStatusRequest.userId()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -221,9 +223,7 @@ public class TeamService {
         return teamInvitationRepository.existsByToUserIdAndTeamIdAndInvitationStatus(toUserId, teamId, InvitationStatus.PENDING);
     }
 
-    private boolean checkIfUserIsTeamOwner(Long userId, Long teamId) {
-
-        Team team = getTeamById(teamId);
+    private boolean checkIfUserIsTeamOwner(Long userId, Team team) {
 
         return team.getOwnerId().equals(userId);
     }

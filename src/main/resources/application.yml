@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev
   config:
     import: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
   cloud:
@@ -20,7 +18,7 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 keycloak:
-  authUrl: http://localhost:8080/auth
+  authUrl: ${keycloak.url}
   realm: hackathon-organizer
   masterRealm: master
   clientId: admin-cli
@@ -30,3 +28,5 @@ server:
   port: 0
 ws:
   origins: ${WS.ORIGINS}
+api-gateway:
+  url: ${api-gateway.url}

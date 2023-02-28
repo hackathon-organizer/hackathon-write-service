@@ -7,6 +7,8 @@ import java.util.Set;
 
 public record TeamResponse(
         Long id,
+        String name,
+        String description,
         Long ownerId,
         Long hackathonId,
         Set<Long> teamMembersIds,

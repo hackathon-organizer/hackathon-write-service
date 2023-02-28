@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,6 @@ public class Team {
     @NotEmpty(message = "Description can not be empty!")
     private String description;
 
-
     @NotNull
     @Builder.Default
     @ColumnDefault("true")
@@ -56,7 +56,8 @@ public class Team {
     @ManyToMany
     @JoinTable(name = "team_tags", joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+    @Builder.Default
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "team")
     @Builder.Default

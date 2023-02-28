@@ -5,7 +5,6 @@ import javax.validation.constraints.NotNull;
 
 public record CriteriaDto(
 
-        @NotNull
         Long id,
         @NotEmpty
         String name,

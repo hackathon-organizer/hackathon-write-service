@@ -29,23 +29,23 @@ public class TeamController {
 
     @PutMapping("/{id}")
     @RolesAllowed({"TEAM_OWNER", "ORGANIZER"})
-    public TeamResponse editTeam(@PathVariable Long id, @Valid @RequestBody TeamRequest teamRequest, Principal principal) {
+    public TeamResponse updateTeam(@PathVariable Long id, @Valid @RequestBody TeamRequest teamRequest, Principal principal) {
 
-        return teamService.editTeamById(id, teamRequest, principal);
+        return teamService.updateTeamById(id, teamRequest, principal);
     }
 
     @PatchMapping("/{id}")
     @RolesAllowed({"TEAM_OWNER", "ORGANIZER"})
     public boolean openOrCloseTeamForMembers(@PathVariable Long id,
-                                             @RequestBody TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
+                                             @Valid @RequestBody TeamVisibilityStatusRequest teamVisibilityStatusRequest) {
 
         return teamService.openOrCloseTeamForMembers(id, teamVisibilityStatusRequest);
     }
 
-    @PostMapping("/{teamId}/invite/{userId}")
+    @PostMapping("/{teamId}/invites")
     @RolesAllowed({"USER"})
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
-                                 @PathVariable("userId") Long userId,
+                                 @RequestBody Long userId,
                                  @RequestParam("username") String username) {
 
         teamService.processInvitation(teamId, userId, username);
@@ -58,9 +58,9 @@ public class TeamController {
         teamService.updateInvitationStatus(teamInvitation, principal);
     }
 
-    @PatchMapping("/{id}/participants/{userId}")
+    @PatchMapping("/{teamId}/participants/{userId}")
     @RolesAllowed("USER")
-    public void addUserToTeam(@PathVariable("id") Long teamId, @PathVariable("userId") Long userId, Principal principal) {
+    public void addUserToTeam(@PathVariable("teamId") Long teamId, @PathVariable("userId") Long userId, Principal principal) {
 
         teamService.addUserToTeam(teamId, userId, principal);
     }

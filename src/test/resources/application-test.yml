@@ -6,15 +6,17 @@ spring:
         ddl-auto: validate
   liquibase:
     change-log: classpath:changelog/db.changelog-test.xml
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:8080/auth/realms/hackathon-organizer/protocol/openid-connect/certs
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: http://localhost:8080/auth/realms/hackathon-organizer/protocol/openid-connect/certs
 ws:
   origins: '*'
 keycloak:
   login: 'admin'
   password: 'admin'
+api-gateway:
+  url: 'http://localhost:9090'
 
 

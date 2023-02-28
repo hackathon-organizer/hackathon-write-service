@@ -33,9 +33,10 @@ public class KeycloakService {
 
     public void updateUserRole(String keycloakId, Role newRole) {
 
+        log.info("Trying to update role of user with id: {}", keycloakId);
+
         try {
             RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
-
             RolesResource realmRoles = realmResource.roles();
             RoleRepresentation userNewRole = realmRoles.list().stream().filter(role -> role.getName().equals(newRole.name())).findFirst()
                     .orElseThrow(() -> new HackathonException("Role " + newRole + " not found", HttpStatus.NOT_FOUND));
@@ -59,6 +60,9 @@ public class KeycloakService {
     }
 
     public void removeRoles(String keycloakId) {
+
+        log.info("Trying to remove role of user with id: {}", keycloakId);
+
         try {
             RealmResource realmResource = buildKeyCloak().realm(REALM_NAME);
 

@@ -54,9 +54,9 @@ public class HackathonService {
 
         hackathon.addUserToHackathonParticipants(hackathonRequest.ownerId());
 
-        Hackathon savedHackathon = hackathonRepository.save(hackathon);
-
         keycloakService.updateUserRole(principal.getName(), Role.ORGANIZER);
+
+        Hackathon savedHackathon = hackathonRepository.save(hackathon);
 
         log.info("Hackathon with id: {} saved successfully", savedHackathon.getId());
 
@@ -215,15 +215,15 @@ public class HackathonService {
 
             savedAnswers = criteriaAnswers.stream().map(answerRequest -> {
 
-                Criteria criteria = criteriaRepository.findById(answerRequest.criteriaId()).
-                        orElseThrow(() -> new HackathonException(
+                Criteria criteria = criteriaRepository.findById(answerRequest.criteriaId()).orElseThrow(
+                        () -> new HackathonException(
                                 String.format("Criteria with id: %d not found", answerRequest.criteriaId()),
                                 HttpStatus.NOT_FOUND));
 
                 if (answerRequest.id() != null) {
 
-                    CriteriaAnswer a = criteriaAnswerRepository.findById(answerRequest.id())
-                            .orElseThrow(() -> new HackathonException(
+                    CriteriaAnswer a = criteriaAnswerRepository.findById(answerRequest.id()).orElseThrow(
+                            () -> new HackathonException(
                                     String.format("Criteria answer with id: %d not found", answerRequest.criteriaId()),
                                     HttpStatus.NOT_FOUND));
 
@@ -270,30 +270,6 @@ public class HackathonService {
         return hackathonRequest.eventStartDate().isAfter(hackathonRequest.eventEndDate()) ||
                 LocalDateTime.now().isAfter(hackathonRequest.eventStartDate()) ||
                 LocalDateTime.now().isAfter(hackathonRequest.eventEndDate());
-    }
-
-    public void saveCriteriaAnswers(List<CriteriaAnswerRequest> criteriaAnswers) {
-
-        criteriaAnswers.forEach(criteriaRequest -> {
-            Criteria criteria =
-                    criteriaRepository.findById(criteriaRequest.id()).orElseThrow();
-            CriteriaAnswer criteriaAnswer = buildCriteriaAnswer(criteriaRequest, criteria);
-            criteria.addAnswer(criteriaAnswer);
-
-            criteriaRepository.save(criteria);
-        });
-        log.info("Criteria answers for hackathon saved successfully");
-    }
-
-    private CriteriaAnswer buildCriteriaAnswer(CriteriaAnswerRequest criteriaRequest, Criteria criteria) {
-        CriteriaAnswerDto criteriaAnswerDto = criteriaRequest.criteriaAnswer();
-        return CriteriaAnswer.builder()
-                .id(criteriaAnswerDto.id())
-                .value(criteriaAnswerDto.value())
-                .teamId(criteriaAnswerDto.teamId())
-                .userId(criteriaAnswerDto.userId())
-                .criteria(criteria)
-                .build();
     }
 
     public Hackathon getHackathonById(Long hackathonId) {
