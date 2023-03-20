@@ -1,7 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.team.controller;
 
 import com.hackathonorganizer.hackathonwriteservice.BaseIntegrationTest;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.creator.TestDataUtils;
+import com.hackathonorganizer.hackathonwriteservice.creator.TestDataUtils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.keycloak.KeycloakService;
 import com.hackathonorganizer.hackathonwriteservice.keycloak.Role;
@@ -122,7 +122,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
                 userId,
                 Role.USER,
                 team.getId().toString(),
-                "invites",
+                "invitations",
                 "?username=username"));
 
         // then
@@ -161,7 +161,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
                         teamInvitationDto,
                         Role.USER,
                         team.getId().toString(),
-                        "invites"));
+                        "invitations"));
 
         // then
 
@@ -199,7 +199,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
                 mockMvc.perform(patchTeamJsonRequest(teamInvitationDto,
                         Role.USER,
                         team.getId().toString(),
-                        "invites"));
+                        "invitations"));
 
         // then
 

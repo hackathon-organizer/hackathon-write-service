@@ -297,4 +297,10 @@
         </insert>
     </changeSet>
 
+    <changeSet id="add-logo-file-path-to-hackathon" author="Yankes">
+        <addColumn tableName="hackathon">
+            <column name="logo_name" type="varchar"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

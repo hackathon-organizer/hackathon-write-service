@@ -8,6 +8,7 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonS
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/v1/write/hackathons")
 @RequiredArgsConstructor
 public class HackathonController {
+
     private final HackathonService hackathonService;
 
     @PostMapping
@@ -31,14 +33,16 @@ public class HackathonController {
     @PutMapping("/{hackathonId}")
     @RolesAllowed({"ORGANIZER"})
     public HackathonResponse updateHackathon(@PathVariable("hackathonId") Long hackathonId,
-                                                 @RequestBody @Valid HackathonRequest hackathonRequest, Principal principal) {
+                                             @RequestBody @Valid HackathonRequest hackathonRequest,
+                                             Principal principal) {
 
         return hackathonService.updateHackathon(hackathonId, hackathonRequest, principal);
     }
 
     @PatchMapping("/{hackathonId}/participants/{userId}")
     @RolesAllowed("USER")
-    public void signUpUserToHackathon(@PathVariable("hackathonId") Long hackathonId, @PathVariable("userId") Long userId,
+    public void signUpUserToHackathon(@PathVariable("hackathonId") Long hackathonId,
+                                      @PathVariable("userId") Long userId,
                                       Principal principal) {
 
         hackathonService.assignUserToHackathon(hackathonId, userId, principal);
@@ -46,7 +50,8 @@ public class HackathonController {
 
     @PatchMapping("/{hackathonId}/participants/{userId}/remove")
     @RolesAllowed({"ORGANIZER"})
-    public void removeUserFromHackathon(@PathVariable("hackathonId") Long hackathonId, @PathVariable("userId") Long userId,
+    public void removeUserFromHackathon(@PathVariable("hackathonId") Long hackathonId,
+                                        @PathVariable("userId") Long userId,
                                         Principal principal) {
 
         hackathonService.removeUserFromHackathonParticipants(hackathonId, userId, principal);
@@ -87,5 +92,14 @@ public class HackathonController {
                                Principal principal) {
 
         hackathonService.deleteCriteria(hackathonId, criteriaId, principal);
+    }
+
+    @PostMapping("/{hackathonId}/files")
+    @RolesAllowed({"ORGANIZER"})
+    public void uploadFile(@RequestParam("file") MultipartFile file,
+                           @PathVariable("hackathonId") Long hackathonId,
+                           Principal principal) {
+
+        hackathonService.uploadFile(file, hackathonId, principal);
     }
 }

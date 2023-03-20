@@ -5,27 +5,26 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record HackathonRequest(
 
-        @NotEmpty
+        @NotEmpty(message = "Hackathon name can not be empty!")
         String name,
 
-        @NotEmpty
+        @NotEmpty(message = "Hackathon description can not be empty!")
         String description,
 
-        @NotEmpty
+        @NotEmpty(message = "Organizer info can not be empty!")
         String organizerInfo,
 
         Boolean isActive,
 
         @NotNull
-        @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-        LocalDateTime eventStartDate,
+        OffsetDateTime eventStartDate,
 
         @NotNull
-        @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-        LocalDateTime eventEndDate,
+        OffsetDateTime eventEndDate,
 
         @NotNull
         Long ownerId

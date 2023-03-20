@@ -38,6 +38,18 @@ public class BaseIntegrationTest {
     private static final PostgreSQLContainer sqlContainer;
     private static final KeycloakContainer keycloakContainer;
 
+    private final String BASE_URL_HACKATHON = "/api/v1/write/hackathons/";
+    private final String BASE_URL_TEAM = "/api/v1/write/teams/";
+
+    @Autowired
+    protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected RestTemplate restTemplate;
+
     static {
         sqlContainer = new PostgreSQLContainer(POSTGRESQL_IMAGE_VERSION);
         sqlContainer.start();
@@ -45,15 +57,6 @@ public class BaseIntegrationTest {
         keycloakContainer = new KeycloakContainer(KC_IMAGE_VERSION).withRealmImportFile("/realm-export.json");
         keycloakContainer.start();
     }
-
-    private final String BASE_URL_HACKATHON = "/api/v1/write/hackathons/";
-    private final String BASE_URL_TEAM = "/api/v1/write/teams/";
-    @Autowired
-    protected MockMvc mockMvc;
-    @Autowired
-    protected ObjectMapper objectMapper;
-    @Autowired
-    protected RestTemplate restTemplate;
 
     @DynamicPropertySource
     public static void overrideProperties(final DynamicPropertyRegistry registry) {

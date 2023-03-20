@@ -1,7 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.team.service;
 
 import com.hackathonorganizer.hackathonwriteservice.exception.TeamException;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.creator.TestDataUtils;
+import com.hackathonorganizer.hackathonwriteservice.creator.TestDataUtils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonService;
 import com.hackathonorganizer.hackathonwriteservice.keycloak.KeycloakService;

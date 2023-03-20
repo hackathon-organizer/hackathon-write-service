@@ -42,7 +42,7 @@ public class TeamController {
         return teamService.openOrCloseTeamForMembers(id, teamVisibilityStatusRequest);
     }
 
-    @PostMapping("/{teamId}/invites")
+    @PostMapping("/{teamId}/invitations")
     @RolesAllowed({"USER"})
     public void inviteUserToTeam(@PathVariable("teamId") Long teamId,
                                  @RequestBody Long userId,
@@ -51,7 +51,7 @@ public class TeamController {
         teamService.processInvitation(teamId, userId, username);
     }
 
-    @PatchMapping("/{teamId}/invites")
+    @PatchMapping("/{teamId}/invitations")
     @RolesAllowed("USER")
     public void updateInvitationStatus(@RequestBody @Valid TeamInvitationDto teamInvitation, Principal principal) {
 

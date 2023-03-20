@@ -1,4 +1,4 @@
-package com.hackathonorganizer.hackathonwriteservice.hackathon.creator;
+package com.hackathonorganizer.hackathonwriteservice.creator;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +31,6 @@ import static org.mockito.Mockito.when;
 @Component
 @RequiredArgsConstructor
 public class TestDataUtils {
-
 
     private final HackathonRepository hackathonRepository;
     private final TeamRepository teamRepository;
@@ -41,6 +42,9 @@ public class TestDataUtils {
     @MockBean
     private static RestCommunicator restCommunicator;
 
+    private static OffsetDateTime eventStartDate = OffsetDateTime.of(2123, 10, 10, 12, 0, 0, 0, ZoneOffset.UTC);
+    private static OffsetDateTime eventEndDate =  OffsetDateTime.of(2123, 10, 12, 12, 0, 0, 0, ZoneOffset.UTC);
+
     public static Hackathon buildHackathonMock() {
         return Hackathon.builder()
                 .id(5L)
@@ -48,8 +52,8 @@ public class TestDataUtils {
                 .description("Desc")
                 .organizerInfo("Org Info")
                 .isActive(true)
-                .eventStartDate(LocalDateTime.of(2522, 12, 12, 13, 0))
-                .eventEndDate(LocalDateTime.of(2522, 12, 13, 13, 0))
+                .eventStartDate(eventStartDate)
+                .eventEndDate(eventEndDate)
                 .ownerId(1L)
                 .teams(List.of())
                 .build();
@@ -59,8 +63,6 @@ public class TestDataUtils {
         String name = "Hackathon";
         String desc = "Hackathon desc";
         String organizerInfo = "Organizer info";
-        LocalDateTime eventStartDate = LocalDateTime.now().plusDays(4);
-        LocalDateTime eventEndDate = LocalDateTime.now().plusDays(7);
 
         return new HackathonRequest(name, desc, organizerInfo, true, eventStartDate, eventEndDate, 1L);
     }
@@ -104,9 +106,6 @@ public class TestDataUtils {
         String name = "Hackathon";
         String description = "Hackathon desc";
         String organizerInfo = "Organizer info";
-
-        LocalDateTime eventStartDate = LocalDateTime.now().plusDays(4);
-        LocalDateTime eventEndDate = LocalDateTime.now().plusDays(6);
 
         return hackathonRepository.save(
                 Hackathon.builder()

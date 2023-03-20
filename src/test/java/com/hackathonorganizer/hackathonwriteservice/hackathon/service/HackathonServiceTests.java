@@ -1,7 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.service;
 
 import com.hackathonorganizer.hackathonwriteservice.exception.HackathonException;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.creator.TestDataUtils;
+import com.hackathonorganizer.hackathonwriteservice.creator.TestDataUtils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;

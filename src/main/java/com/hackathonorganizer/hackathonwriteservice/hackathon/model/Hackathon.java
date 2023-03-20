@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,16 +39,18 @@ public class Hackathon {
     @NotNull(message = "Owner id can not be null!")
     private Long ownerId;
 
+    private String logoName;
+
     @Builder.Default
     private boolean isActive = true;
 
     @NotNull(message = "Event start date can not be null!")
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-    private LocalDateTime eventStartDate;
+    private OffsetDateTime eventStartDate;
 
     @NotNull(message = "Event end date can not be null!")
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
-    private LocalDateTime eventEndDate;
+    private OffsetDateTime eventEndDate;
 
     @OneToMany(mappedBy = "hackathon")
     private List<Team> teams;

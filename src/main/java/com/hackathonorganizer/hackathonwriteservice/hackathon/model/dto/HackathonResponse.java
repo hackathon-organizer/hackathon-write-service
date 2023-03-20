@@ -10,6 +10,8 @@ public record HackathonResponse(
         @NotEmpty
         String name,
 
+        String logoName,
+
         @NotEmpty
         String description
 ) {

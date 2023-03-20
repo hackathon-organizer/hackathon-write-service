@@ -1,7 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.controller;
 
 import com.hackathonorganizer.hackathonwriteservice.BaseIntegrationTest;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.creator.TestDataUtils;
+import com.hackathonorganizer.hackathonwriteservice.creator.TestDataUtils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
@@ -19,15 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
 public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
 
     @Autowired

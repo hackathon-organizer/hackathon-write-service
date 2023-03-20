@@ -59,7 +59,7 @@ public class Team {
     @Builder.Default
     private List<Tag> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     @Builder.Default
     private Set<TeamInvitation> invitations = new HashSet<>();
 

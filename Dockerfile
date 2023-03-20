@@ -18,6 +18,8 @@ FROM openjdk:17-slim as runtime
 
 ENV APP_HOME /app
 
+RUN mkdir /var/files
+
 RUN mkdir $APP_HOME
 
 WORKDIR $APP_HOME

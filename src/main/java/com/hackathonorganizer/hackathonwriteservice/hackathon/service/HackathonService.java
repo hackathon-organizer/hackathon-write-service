@@ -14,13 +14,23 @@ import com.hackathonorganizer.hackathonwriteservice.utils.HackathonMapper;
 import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
 import com.hackathonorganizer.hackathonwriteservice.utils.UserPermissionValidator;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
+import liquibase.pro.packaged.F;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -113,7 +123,7 @@ public class HackathonService {
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
-        if (LocalDateTime.now().isBefore(hackathon.getEventStartDate())) {
+        if (OffsetDateTime.now().isBefore(hackathon.getEventStartDate())) {
 
             hackathon.addUserToHackathonParticipants(userId);
             keycloakService.removeRoles(principal.getName());
@@ -268,8 +278,8 @@ public class HackathonService {
     private boolean areEventDatesNotValid(HackathonRequest hackathonRequest) {
 
         return hackathonRequest.eventStartDate().isAfter(hackathonRequest.eventEndDate()) ||
-                LocalDateTime.now().isAfter(hackathonRequest.eventStartDate()) ||
-                LocalDateTime.now().isAfter(hackathonRequest.eventEndDate());
+                OffsetDateTime.now().isAfter(hackathonRequest.eventStartDate()) ||
+                OffsetDateTime.now().isAfter(hackathonRequest.eventEndDate());
     }
 
     public Hackathon getHackathonById(Long hackathonId) {
@@ -281,5 +291,31 @@ public class HackathonService {
 
     public boolean isUserHackathonParticipant(Long hackathonId, Long userHackathonId) {
         return userHackathonId.equals(hackathonId);
+    }
+
+    public void uploadFile(MultipartFile file, Long hackathonId, Principal principal) {
+
+        Hackathon hackathon = getHackathonById(hackathonId);
+
+        if (userPermissionValidator.verifyUser(principal, hackathon.getOwnerId())) {
+
+            String fileName = file.getOriginalFilename();
+
+            try {
+                Path path = Paths.get("/var/files/" + fileName);
+                Files.write(path, file.getBytes());
+
+                hackathon.setLogoName(fileName);
+                hackathonRepository.save(hackathon);
+
+                log.info("File uploaded successfully");
+
+            } catch (Exception e) {
+                log.info("Failed to upload file {}", e.getMessage());
+
+                throw new HackathonException("Failed to upload file: " + e.getMessage(),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }
