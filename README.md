@@ -5,8 +5,8 @@ Write service used mainly to create/update hackathon related data and manage use
 # Responsibilities
 
 - Create and update hackathons and teams data
-- Assing/Remove user from hackathon
-- Add criteria that will be used to evalute teams
+- Assign/Remove user from hackathon
+- Add criteria that will be used to evaluate teams
 - Count teams score and presents results as a leaderboard
 - Open/Close team for accepting new members
 - Use WebSocket communication to send notifications and invitations to user
