@@ -2,13 +2,10 @@ package com.hackathonorganizer.hackathonwriteservice.team.model.dto;
 
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
-public record TeamInvitationDto(
+public record TeamInvitationRequest(
 
         @NotNull
         Long id,

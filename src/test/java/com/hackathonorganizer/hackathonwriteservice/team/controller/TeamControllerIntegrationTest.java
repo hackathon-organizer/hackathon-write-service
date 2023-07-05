@@ -8,7 +8,7 @@ import com.hackathonorganizer.hackathonwriteservice.keycloak.Role;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamVisibilityStatusRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.repository.TeamInvitationRepository;
@@ -146,7 +146,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
                 team.getName(),
                 team));
 
-        TeamInvitationDto teamInvitationDto = new TeamInvitationDto(
+        TeamInvitationRequest teamInvitationRequest = new TeamInvitationRequest(
                 invitation.getId(),
                 "fromUsername",
                 15L,
@@ -158,7 +158,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
 
         ResultActions resultActions =
                 mockMvc.perform(patchTeamJsonRequest(
-                        teamInvitationDto,
+                        teamInvitationRequest,
                         Role.USER,
                         team.getId().toString(),
                         "invitations"));
@@ -185,7 +185,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
                 team.getName(),
                 team));
 
-        TeamInvitationDto teamInvitationDto = new TeamInvitationDto(
+        TeamInvitationRequest teamInvitationRequest = new TeamInvitationRequest(
                 invitation.getId(),
                 "fromUsername",
                 15L,
@@ -196,7 +196,7 @@ public class TeamControllerIntegrationTest extends BaseIntegrationTest {
         // when
 
         ResultActions resultActions =
-                mockMvc.perform(patchTeamJsonRequest(teamInvitationDto,
+                mockMvc.perform(patchTeamJsonRequest(teamInvitationRequest,
                         Role.USER,
                         team.getId().toString(),
                         "invitations"));

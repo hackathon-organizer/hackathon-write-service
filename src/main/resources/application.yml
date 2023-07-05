@@ -18,15 +18,15 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 keycloak:
-  authUrl: ${keycloak.url}
+  authUrl: ${KEYCLOAK_URL}
   realm: hackathon-organizer
   masterRealm: master
   clientId: admin-cli
-  username: ${keycloak.login}
-  password: ${keycloak.password}
+  username: ${KEYCLOAK_LOGIN}
+  password: ${KEYCLOAK_PASSWORD}
 server:
   port: 0
 ws:
-  origins: ${WS.ORIGINS}
+  origins: ${WS_ORIGINS}
 api-gateway:
-  url: ${api-gateway.url}
+  url: ${API_GATEWAY_URL}

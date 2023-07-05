@@ -17,9 +17,6 @@ public record HackathonRequest(
 
         @NotEmpty(message = "Organizer info can not be empty!")
         String organizerInfo,
-
-        Boolean isActive,
-
         @NotNull
         OffsetDateTime eventStartDate,
 

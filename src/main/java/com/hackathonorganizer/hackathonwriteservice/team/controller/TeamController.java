@@ -1,6 +1,6 @@
 package com.hackathonorganizer.hackathonwriteservice.team.controller;
 
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamVisibilityStatusRequest;
@@ -53,7 +53,7 @@ public class TeamController {
 
     @PatchMapping("/{teamId}/invitations")
     @RolesAllowed("USER")
-    public void updateInvitationStatus(@RequestBody @Valid TeamInvitationDto teamInvitation, Principal principal) {
+    public void updateInvitationStatus(@RequestBody @Valid TeamInvitationRequest teamInvitation, Principal principal) {
 
         teamService.updateInvitationStatus(teamInvitation, principal);
     }

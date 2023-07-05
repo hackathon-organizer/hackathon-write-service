@@ -8,7 +8,7 @@ import com.hackathonorganizer.hackathonwriteservice.keycloak.KeycloakService;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamVisibilityStatusRequest;
@@ -164,7 +164,7 @@ class TeamServiceTest {
         doAnswer(invocation -> invocation.getArgument(0)).when(teamInvitationRepository).save(any(TeamInvitation.class));
         doAnswer(invocation -> invocation.getArgument(0)).when(teamRepository).save(any(Team.class));
 
-        TeamInvitationDto teamInvitationDto = new TeamInvitationDto(
+        TeamInvitationRequest teamInvitationRequest = new TeamInvitationRequest(
                 teamInvitationMock.getId(),
                 "fromUsername",
                 15L,
@@ -174,7 +174,7 @@ class TeamServiceTest {
 
         // when
 
-        teamService.updateInvitationStatus(teamInvitationDto, principal);
+        teamService.updateInvitationStatus(teamInvitationRequest, principal);
 
         // then
         verify(teamRepository).findById(anyLong());
@@ -194,7 +194,7 @@ class TeamServiceTest {
         when(teamInvitationRepository.findById(anyLong())).thenReturn(Optional.of(teamInvitationMock));
         doAnswer(invocation -> invocation.getArgument(0)).when(teamInvitationRepository).save(any(TeamInvitation.class));
 
-        TeamInvitationDto teamInvitationDto = new TeamInvitationDto(
+        TeamInvitationRequest teamInvitationRequest = new TeamInvitationRequest(
                 teamInvitationMock.getId(),
                 "fromUsername",
                 15L,
@@ -204,7 +204,7 @@ class TeamServiceTest {
 
         // when
 
-        teamService.updateInvitationStatus(teamInvitationDto, principal);
+        teamService.updateInvitationStatus(teamInvitationRequest, principal);
 
         // then
         verify(teamRepository).findById(anyLong());

@@ -8,6 +8,7 @@ public record CriteriaAnswerDto(
 
         @NotNull(message = "Criteria id must not be null")
         Long criteriaId,
+
         Integer value,
 
         @NotNull(message = "Team id must not be null")

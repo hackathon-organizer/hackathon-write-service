@@ -64,7 +64,7 @@ public class TestDataUtils {
         String desc = "Hackathon desc";
         String organizerInfo = "Organizer info";
 
-        return new HackathonRequest(name, desc, organizerInfo, true, eventStartDate, eventEndDate, 1L);
+        return new HackathonRequest(name, desc, organizerInfo, eventStartDate, eventEndDate, 1L);
     }
 
     public static Team buildTeamMock() {

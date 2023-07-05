@@ -3,7 +3,7 @@ package com.hackathonorganizer.hackathonwriteservice.utils;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import lombok.experimental.UtilityClass;
 
@@ -22,8 +22,8 @@ public class TeamMapper {
                 team.getTags());
     }
 
-    public static TeamInvitationDto mapToTeamInvitationDto(TeamInvitation teamInvitation) {
-        return new TeamInvitationDto(
+    public static TeamInvitationRequest mapToTeamInvitationDto(TeamInvitation teamInvitation) {
+        return new TeamInvitationRequest(
                 teamInvitation.getId(),
                 teamInvitation.getFromUserName(),
                 teamInvitation.getToUserId(),

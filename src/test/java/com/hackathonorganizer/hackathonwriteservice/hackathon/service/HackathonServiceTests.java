@@ -6,7 +6,7 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaAnswerRepository;
@@ -208,10 +208,10 @@ public class HackathonServiceTests {
         // given
         Long hackathonId = 5L;
 
-        CriteriaDto criteriaDto = new CriteriaDto(null, "crit1", hackathonId);
-        CriteriaDto criteriaDto2 = new CriteriaDto(null, "crit2", hackathonId);
+        CriteriaRequest criteriaRequest = new CriteriaRequest(null, "crit1", hackathonId);
+        CriteriaRequest criteriaRequest2 = new CriteriaRequest(null, "crit2", hackathonId);
 
-        List<CriteriaDto> criteria = List.of(criteriaDto, criteriaDto2);
+        List<CriteriaRequest> criteria = List.of(criteriaRequest, criteriaRequest2);
 
         when(hackathonRepository.findById(hackathonId)).thenReturn(Optional.of(mockHackathon));
         doAnswer(invocation -> invocation.getArgument(0)).when(criteriaRepository).save(any(Criteria.class));
@@ -219,7 +219,7 @@ public class HackathonServiceTests {
         mockUserVerification();
 
         // when
-        List<CriteriaDto> result = hackathonService.addRateCriteriaToHackathon(hackathonId, criteria, principal);
+        List<CriteriaRequest> result = hackathonService.addRateCriteriaToHackathon(hackathonId, criteria, principal);
 
         // then
         verify(hackathonRepository).findById(anyLong());
@@ -235,14 +235,14 @@ public class HackathonServiceTests {
         Long hackathonId = 5L;
         Long criteriaId = 1L;
 
-        CriteriaDto criteriaDto = new CriteriaDto(criteriaId, "crit34", hackathonId);
+        CriteriaRequest criteriaRequest = new CriteriaRequest(criteriaId, "crit34", hackathonId);
 
-        List<CriteriaDto> criteria = List.of(criteriaDto);
+        List<CriteriaRequest> criteria = List.of(criteriaRequest);
 
         Criteria criteriaMock = new Criteria(criteriaId, "crit1", mockHackathon, Set.of());
 
         when(hackathonRepository.findById(hackathonId)).thenReturn(Optional.of(mockHackathon));
-        when(criteriaRepository.findById(criteriaDto.id())).thenReturn(Optional.of(criteriaMock));
+        when(criteriaRepository.findById(criteriaRequest.id())).thenReturn(Optional.of(criteriaMock));
         doAnswer(invocation -> invocation.getArgument(0)).when(criteriaRepository).save(any(Criteria.class));
 
         principal = new UserPrincipal("id");
@@ -257,7 +257,7 @@ public class HackathonServiceTests {
         verify(criteriaRepository).save(criteriaCaptor.capture());
         Criteria captured = criteriaCaptor.getValue();
 
-        assertThat(captured.getName()).isEqualTo(criteriaDto.name());
+        assertThat(captured.getName()).isEqualTo(criteriaRequest.name());
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.hackathonorganizer.hackathonwriteservice.hackathon.controller;
 
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.service.HackathonService;
@@ -60,9 +60,9 @@ public class HackathonController {
     @PostMapping("/{hackathonId}/criteria")
     @ResponseStatus(code = HttpStatus.CREATED)
     @RolesAllowed({"ORGANIZER"})
-    public List<CriteriaDto> addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId,
-                                                        @RequestBody List<CriteriaDto> criteriaRequest,
-                                                        Principal principal) {
+    public List<CriteriaRequest> addRateCriteriaToHackathon(@PathVariable("hackathonId") Long hackathonId,
+                                                            @RequestBody List<CriteriaRequest> criteriaRequest,
+                                                            Principal principal) {
 
         return hackathonService.addRateCriteriaToHackathon(hackathonId, criteriaRequest, principal);
     }
@@ -70,7 +70,7 @@ public class HackathonController {
     @PutMapping("/{hackathonId}/criteria")
     @RolesAllowed({"JURY", "ORGANIZER"})
     public void updateRateCriteriaInHackathon(@PathVariable("hackathonId") Long hackathonId,
-                                              @RequestBody List<CriteriaDto> criteriaRequest,
+                                              @RequestBody List<CriteriaRequest> criteriaRequest,
                                               Principal principal) {
 
         hackathonService.updateRateCriteriaInHackathon(hackathonId, criteriaRequest, principal);

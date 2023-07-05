@@ -8,7 +8,7 @@ import com.hackathonorganizer.hackathonwriteservice.keycloak.Role;
 import com.hackathonorganizer.hackathonwriteservice.team.model.InvitationStatus;
 import com.hackathonorganizer.hackathonwriteservice.team.model.Team;
 import com.hackathonorganizer.hackathonwriteservice.team.model.TeamInvitation;
-import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationDto;
+import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamInvitationRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamRequest;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamResponse;
 import com.hackathonorganizer.hackathonwriteservice.team.model.dto.TeamVisibilityStatusRequest;
@@ -114,18 +114,16 @@ public class TeamService {
         notificationService.sendTeamInviteNotification(savedTeamInvitation);
     }
 
-    public void updateInvitationStatus(TeamInvitationDto teamInvitationDto, Principal principal) {
+    public void updateInvitationStatus(TeamInvitationRequest teamInvitationRequest, Principal principal) {
 
-        Team team = getTeamById(teamInvitationDto.teamId());
+        Team team = getTeamById(teamInvitationRequest.teamId());
+        TeamInvitation teamInvitation = getTeamInvitationById(teamInvitationRequest.id());
 
-        TeamInvitation teamInvitation = getTeamInvitationById(teamInvitationDto.id());
-
-        if (teamInvitationDto.invitationStatus() == InvitationStatus.ACCEPTED) {
+        if (teamInvitationRequest.invitationStatus() == InvitationStatus.ACCEPTED) {
 
             teamInvitation.setInvitationStatus(InvitationStatus.ACCEPTED);
             keycloakService.removeRole(principal.getName(), Role.TEAM_OWNER);
-            team.addUserToTeam(teamInvitationDto.toUserId());
-
+            team.addUserToTeam(teamInvitationRequest.toUserId());
             teamRepository.save(team);
         } else {
             teamInvitation.setInvitationStatus(InvitationStatus.REJECTED);

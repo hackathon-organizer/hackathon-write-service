@@ -4,7 +4,7 @@ import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.CriteriaAnswer;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonResponse;
 import lombok.experimental.UtilityClass;
 
@@ -20,9 +20,9 @@ public class HackathonMapper {
                 hackathon.getDescription());
     }
 
-    public static CriteriaDto mapToCriteriaDto(Criteria criteria) {
+    public static CriteriaRequest mapToCriteriaDto(Criteria criteria) {
 
-        return new CriteriaDto(
+        return new CriteriaRequest(
                 criteria.getId(),
                 criteria.getName(),
                 criteria.getHackathon().getId()

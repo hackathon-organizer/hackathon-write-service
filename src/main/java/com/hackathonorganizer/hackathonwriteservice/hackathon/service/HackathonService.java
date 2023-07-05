@@ -14,22 +14,16 @@ import com.hackathonorganizer.hackathonwriteservice.utils.HackathonMapper;
 import com.hackathonorganizer.hackathonwriteservice.utils.RestCommunicator;
 import com.hackathonorganizer.hackathonwriteservice.utils.UserPermissionValidator;
 import com.hackathonorganizer.hackathonwriteservice.utils.dto.UserResponseDto;
-import liquibase.pro.packaged.F;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -90,7 +84,6 @@ public class HackathonService {
                     .description(hackathonUpdatedData.description())
                     .organizerInfo(hackathonUpdatedData.organizerInfo())
                     .ownerId(hackathonUpdatedData.ownerId())
-                    .isActive(hackathonUpdatedData.isActive())
                     .eventStartDate(hackathonUpdatedData.eventStartDate())
                     .eventEndDate(hackathonUpdatedData.eventEndDate())
                     .build();
@@ -151,7 +144,7 @@ public class HackathonService {
         }
     }
 
-    public List<CriteriaDto> addRateCriteriaToHackathon(Long hackathonId, List<CriteriaDto> criteria, Principal principal) {
+    public List<CriteriaRequest> addRateCriteriaToHackathon(Long hackathonId, List<CriteriaRequest> criteria, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
 
@@ -172,7 +165,7 @@ public class HackathonService {
         return List.of();
     }
 
-    public void updateRateCriteriaInHackathon(Long hackathonId, List<CriteriaDto> criteria, Principal principal) {
+    public void updateRateCriteriaInHackathon(Long hackathonId, List<CriteriaRequest> criteria, Principal principal) {
 
         Hackathon hackathon = getHackathonById(hackathonId);
         UserResponseDto userResponseDto = restCommunicator.getUserByKeycloakId(principal.getName());

@@ -5,7 +5,7 @@ import com.hackathonorganizer.hackathonwriteservice.creator.TestDataUtils;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Criteria;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.Hackathon;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaAnswerDto;
-import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaDto;
+import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.CriteriaRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.model.dto.HackathonRequest;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaAnswerRepository;
 import com.hackathonorganizer.hackathonwriteservice.hackathon.repository.CriteriaRepository;
@@ -129,10 +129,10 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         // given
 
         Hackathon hackathon = testDataUtils.createHackathon();
-        CriteriaDto criteriaDto = new CriteriaDto(null, "crit1", hackathon.getId());
-        CriteriaDto criteriaDto2 = new CriteriaDto(null, "crit2", hackathon.getId());
+        CriteriaRequest criteriaRequest = new CriteriaRequest(null, "crit1", hackathon.getId());
+        CriteriaRequest criteriaRequest2 = new CriteriaRequest(null, "crit2", hackathon.getId());
 
-        List<CriteriaDto> request = List.of(criteriaDto, criteriaDto2);
+        List<CriteriaRequest> request = List.of(criteriaRequest, criteriaRequest2);
 
         testDataUtils.mockUserVerification();
 
@@ -144,7 +144,7 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         resultActions.andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.length()").value(request.size()))
-                .andExpect(jsonPath("$[1].name").value(criteriaDto2.name()));
+                .andExpect(jsonPath("$[1].name").value(criteriaRequest2.name()));
         Assertions.assertEquals(criteriaRepository.findAll().size(), 2);
     }
 
@@ -156,9 +156,9 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         hackathon.setHackathonParticipantsIds(Set.of(1L));
         hackathon = testDataUtils.updateHackathonProperties(hackathon);
         Criteria criteria = testDataUtils.createCriteria(hackathon);
-        CriteriaDto criteriaDto = new CriteriaDto(criteria.getId(), "updated crit2", hackathon.getId());
+        CriteriaRequest criteriaDto = new CriteriaRequest(criteria.getId(), "updated crit2", hackathon.getId());
 
-        List<CriteriaDto> criteriaRequest = List.of(criteriaDto);
+        List<CriteriaRequest> criteriaRequest = List.of(criteriaDto);
 
         testDataUtils.mockUserExternalCall(hackathon);
         testDataUtils.mockUserVerification();
@@ -178,9 +178,9 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
 
         Hackathon hackathon = testDataUtils.createHackathon();
 
-        CriteriaDto criteriaDto = new CriteriaDto(null, "crit", hackathon.getId());
+        CriteriaRequest criteriaDto = new CriteriaRequest(null, "crit", hackathon.getId());
 
-        List<CriteriaDto> criteriaRequest = List.of(criteriaDto);
+        List<CriteriaRequest> criteriaRequest = List.of(criteriaDto);
 
         // when
         ResultActions resultActions =
@@ -198,9 +198,9 @@ public class HackathonControllerIntegrationTests extends BaseIntegrationTest {
         Hackathon hackathon = testDataUtils.createHackathon();
         Team team = testDataUtils.createTeam(hackathon);
         Criteria criteria = testDataUtils.createCriteria(hackathon);
-        CriteriaAnswerDto criteriaDto = new CriteriaAnswerDto(null, criteria.getId(), 70, team.getId(), 1L);
+        CriteriaAnswerDto criteriaRequest = new CriteriaAnswerDto(null, criteria.getId(), 70, team.getId(), 1L);
 
-        List<CriteriaAnswerDto> answers = List.of(criteriaDto);
+        List<CriteriaAnswerDto> answers = List.of(criteriaRequest);
 
         testDataUtils.mockUserExternalCall(hackathon);
         testDataUtils.mockUserVerification();
